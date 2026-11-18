@@ -1084,6 +1084,35 @@ const RECIPES = [
     note: ["Make it your own", "Swap the whisky for dark rum or brandy, or add a slice of fresh ginger with the cinnamon. Taste and add more honey if you like it sweeter."]
   },
   {
+    id: "pan-hot-chocolate",
+    category: "drinks",
+    tags: ["Christmas", "Bonfire night", "Quick", "Vegetarian"],
+    title: "Proper Hot Chocolate",
+    blurb: "A pan of milk with real chocolate bars melted in and whisked until thick and frothy. Add a slug of rum, Baileys or brandy to each mug for the grown-ups.",
+    serves: 4, unit: "mugs",
+    chips: [["Serves 4"], ["15 min"], ["Boozy option", "hot"]],
+    ingredients: [
+      [1000, "ml", "whole milk"],
+      [100, "ml", "double cream (optional, for extra richness)"],
+      [100, "g", "dark chocolate (about 70%), chopped"],
+      [100, "g", "milk chocolate, chopped"],
+      [1, "tbsp", "light brown sugar (to taste)"],
+      [0.5, "tsp", "vanilla extract"],
+      [1, "pinch", "salt"],
+      [100, "ml", "dark rum, Baileys or brandy (boozy version, optional)"],
+      [1, "", "whipped cream and marshmallows, to serve"]
+    ],
+    steps: [
+      ["Heat the milk", "Warm the milk and cream in a pan over a medium-low heat until steaming. Don't let it boil, or it can catch and form a skin.", 300],
+      ["Melt in the chocolate", "Turn the heat right down, add both chocolates and whisk until completely melted and smooth.", 120],
+      ["Season", "Whisk in the sugar, vanilla and salt. The salt brings out the chocolate. Taste and add more sugar if you like it sweeter.", 0],
+      ["Froth it", "Whisk hard for a minute, or use a stick blender, for a thick, frothy top.", 60],
+      ["Make it boozy", "For the boozy version, put 25ml of rum, Baileys or brandy in each grown-up's mug, then pour the hot chocolate over. That way the rest of the pan stays alcohol-free for kids and drivers.", 0],
+      ["Serve", "Pour into mugs and top with whipped cream and marshmallows."]
+    ],
+    note: ["Other boozy options", "Dark rum is the classic. Baileys makes it creamier, orange liqueur goes well with dark chocolate, and a spiced rum works well on bonfire night. For a thicker hot chocolate, use 250g chocolate to the same milk."]
+  },
+  {
     id: "scorpion-chilli-chutney",
     tags: ["Spicy", "Make-ahead", "Vegetarian"],
     category: "sides",
@@ -1165,6 +1194,7 @@ function fmtQty(amount, unit) {
     if (unit === "g") { const oz = amount / 28.35; return (oz < 10 ? Math.round(oz * 4) / 4 : Math.round(oz)) + " oz"; }
     if (unit === "ml") { const c = amount / 240; return fmtNum(c) + " cup" + (c > 1.1 ? "s" : ""); }
   }
+  if (unit === "ml" && amount >= 1000) return (Math.round(amount / 100) / 10) + " litre" + (amount >= 1050 ? "s" : "");
   if (unit === "g" || unit === "ml") {
     return (amount < 50 ? Math.round(amount) : Math.round(amount / 5) * 5) + " " + unit;
   }
