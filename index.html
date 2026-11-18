@@ -111,6 +111,8 @@ a { color: var(--cobalt); }
   border-top: 5px solid var(--cobalt);
 }
 .card:hover { border-color: var(--cobalt); }
+.card .photo { margin: -18px -20px 4px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 11px 11px 0 0; }
+.card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0; line-height: 1.2; }
 .card p { margin: 0; color: var(--muted); font-size: 14px; }
 .empty {
@@ -126,6 +128,7 @@ a { color: var(--cobalt); }
   text-wrap: balance;
 }
 .recipe-head p { margin: 0; color: var(--muted); max-width: 65ch; }
+.recipe-photo { width: 100%; max-height: 420px; object-fit: cover; border-radius: 16px; display: block; margin-bottom: 8px; border: 1px solid var(--line); }
 .recipe-head p.source { font-size: 14px; margin-top: 4px; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .recipe-head .meta { margin-top: 8px; }
@@ -255,6 +258,7 @@ const RECIPES = [
     id: "apple-nata-tarts",
     category: "puddings",
     title: "Apple Pastéis de Nata",
+    photo: "images/apple-nata-tarts.jpg",
     blurb: "Individual tarts in spiral puff pastry cups, filled with spiced apple and custard and blistered in a very hot oven.",
     serves: 12, unit: "tarts",
     chips: [["Makes 12"], ["About 1 hr 15"], ["240°C fan", "hot"], ["12-hole muffin tin"], ["Christmas"]],
@@ -667,6 +671,7 @@ function renderHome() {
 function recipeCard(r) {
   const c = catOf(r.category);
   return `<a class="card" href="#${r.id}" style="border-top-color:${c.color}">
+    ${r.photo ? `<div class="photo"><img src="${r.photo}" alt="${esc(r.title)}" loading="lazy"></div>` : ""}
     <h3>${esc(r.title)}</h3>
     <p>${esc(r.blurb)}</p>
     <div class="meta">${r.chips.slice(0, 2).map(ch => `<span class="chip">${esc(ch[0])}</span>`).join("")}</div>
@@ -702,6 +707,7 @@ function renderRecipe(r) {
   servings[r.id] = servings[r.id] || r.serves;
   view.innerHTML = `
     <div class="recipe-head">
+      ${r.photo ? `<img class="recipe-photo" src="${r.photo}" alt="${esc(r.title)}">` : ""}
       <h1>${esc(r.title)}</h1>
       <p>${esc(r.blurb)}</p>
       <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>

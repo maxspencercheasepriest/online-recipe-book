@@ -15,6 +15,7 @@ Recipes live in the `RECIPES` array near the bottom of `index.html`. Each one lo
   id: "url-friendly-id",          // used in the #link
   category: "asian",              // one of the CATEGORIES ids
   title: "Recipe name",
+  photo: "images/url-friendly-id.jpg",   // optional, shown on the card and recipe page
   blurb: "One or two sentences.",
   source: ["Site name", "https://..."],   // optional
   serves: 4, unit: "people",      // base quantity the amounts are written for
