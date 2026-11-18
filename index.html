@@ -93,6 +93,47 @@ a { color: var(--cobalt); }
 .tag .n { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .recipe-head .tags { margin-top: 6px; }
 .recipe-head .tag { font-size: 13px; padding: 4px 12px; }
+/* Featured dish */
+.feature {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; margin-top: 4px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+}
+@media (max-width: 700px) { .feature { grid-template-columns: 1fr; } }
+.feature .pic { position: relative; min-height: 260px; background: var(--cobalt-soft); }
+.feature .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.feature .body { padding: 24px 26px; display: grid; align-content: center; gap: 10px; }
+.feature .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--custard); }
+.feature h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.1; margin: 0; text-wrap: balance; }
+.feature p { margin: 0; color: var(--muted); }
+.feature .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; font: 600 15px var(--font-body); cursor: pointer;
+  padding: 10px 18px; border-radius: 999px; text-decoration: none; border: 1px solid var(--cobalt);
+}
+.btn.primary { background: var(--cobalt); color: var(--surface); }
+.btn.ghost { background: transparent; color: var(--cobalt); }
+.btn:hover { filter: brightness(1.08); }
+
+/* Seasonal strip */
+.season { margin-top: 30px; }
+.season-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.season-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; margin: 0; }
+.season-head h2 em { color: var(--custard); }
+.season-head a { font-size: 14px; font-weight: 500; text-decoration: none; }
+.strip {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 220px); gap: 12px;
+  overflow-x: auto; padding: 12px 2px 8px; scroll-snap-type: x mandatory;
+}
+.mini {
+  scroll-snap-align: start; text-decoration: none; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+}
+.mini:hover { border-color: var(--cobalt); }
+.mini .ph { aspect-ratio: 1 / 1; background-size: 28px 28px; }
+.mini .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mini span { display: block; padding: 10px 12px 12px; font-size: 14px; font-weight: 500; line-height: 1.35; }
+.countdown { font-size: 14px; color: var(--muted); }
+
 .section-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; }
 
 .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
@@ -250,6 +291,8 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
       </div>
       <div class="search-results" id="results"></div>
     </div>
+    <div id="feature"></div>
+    <div id="season"></div>
     <div class="section-label">Browse by tag</div>
     <div class="tags" id="home-tags"></div>
     <div class="section-label">Categories</div>
@@ -745,6 +788,62 @@ function renderHome() {
   }).join("");
 }
 
+function dayNumber(d = new Date()) {
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+}
+let featureIndex = null;
+function renderFeature(random) {
+  const pool = RECIPES.filter(r => r.photo);
+  if (!pool.length) return;
+  if (random) {
+    let i; do { i = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && i === featureIndex);
+    featureIndex = i;
+  } else if (featureIndex === null) {
+    featureIndex = dayNumber() % pool.length;
+  }
+  const r = pool[featureIndex], c = catOf(r.category);
+  document.getElementById("feature").innerHTML = `
+    <article class="feature">
+      <div class="pic"><img src="${r.photo}" alt="${esc(r.title)}">${r.standIn ? `<span class="standin">Stand-in photo</span>` : ""}</div>
+      <div class="body">
+        <span class="eyebrow">${random ? "How about this?" : "Dish of the day"} · ${esc(c.name)}</span>
+        <h2>${esc(r.title)}</h2>
+        <p>${esc(r.blurb)}</p>
+        <div class="meta">${r.chips.slice(0, 3).map(ch => `<span class="chip ${ch[1] || ""}">${esc(ch[0])}</span>`).join("")}</div>
+        <div class="actions">
+          <a class="btn primary" href="#${r.id}">Cook this</a>
+          <button type="button" class="btn ghost" id="surprise">Surprise me</button>
+        </div>
+      </div>
+    </article>`;
+  document.getElementById("surprise").addEventListener("click", () => renderFeature(true));
+}
+
+function renderSeason() {
+  const now = new Date();
+  const m = now.getMonth(), d = now.getDate();
+  const el = document.getElementById("season");
+  // Show from 1 November to 31 December
+  if (m < 10) { el.innerHTML = ""; return; }
+  const list = RECIPES.filter(r => (r.tags || []).includes("Christmas"));
+  if (!list.length) { el.innerHTML = ""; return; }
+  const xmas = new Date(now.getFullYear(), 11, 25);
+  const days = Math.ceil((xmas - new Date(now.getFullYear(), m, d)) / 86400000);
+  const when = days > 1 ? `${days} days to go` : days === 1 ? "It's Christmas Eve" : days === 0 ? "Merry Christmas" : "Leftover season";
+  el.innerHTML = `
+    <section class="season">
+      <div class="season-head">
+        <h2>Christmas <em>is coming</em></h2>
+        <span class="countdown">${when} · <a href="#${tagSlug("Christmas")}">See all ${list.length}</a></span>
+      </div>
+      <div class="strip">
+        ${list.map(r => `<a class="mini" href="#${r.id}">
+          <div class="ph" style="${r.photo ? "" : swatch(catOf(r.category).color)}">${r.photo ? `<img src="${r.photo}" alt="" loading="lazy">` : ""}</div>
+          <span>${esc(r.title)}</span></a>`).join("")}
+      </div>
+    </section>`;
+}
+
 function renderHomeTags() {
   document.getElementById("home-tags").innerHTML = TAGS.map(t => {
     const n = RECIPES.filter(r => (r.tags || []).includes(t)).length;
@@ -939,6 +1038,8 @@ function route() {
 
 renderHome();
 renderHomeTags();
+renderFeature(false);
+renderSeason();
 document.getElementById("q").addEventListener("input", renderSearch);
 window.addEventListener("hashchange", route);
 route();
