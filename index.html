@@ -325,6 +325,48 @@ const RECIPES = [
     note: ["Getting ahead", "Make it on Christmas Eve and keep it in the fridge overnight. Take it out an hour before serving and dust with icing sugar and cinnamon at the table."]
   },
   {
+    id: "chocolate-water-mousse",
+    category: "puddings",
+    title: "Two-Ingredient Chocolate Mousse",
+    blurb: "Just dark chocolate and boiling water, whisked over ice until it turns light and airy. Intensely chocolatey, with no eggs or cream.",
+    source: ["Julius Fiedler (YouTube)", ""],
+    serves: 4, unit: "glasses",
+    chips: [["Serves 4"], ["15 min"], ["Ice bath needed", "hot"], ["No eggs or cream"]],
+    ingredients: [
+      [250, "g", "dark chocolate, 65–74% cocoa, chopped"],
+      [225, "ml", "boiling water (200–250ml)"],
+      [1, "", "large bowl of ice and cold water"]
+    ],
+    steps: [
+      ["Melt", "Put the chopped chocolate in a bowl, pour over the boiling water and stir until completely smooth.", 0],
+      ["Set over ice", "Sit the bowl inside a larger bowl of iced water.", 0],
+      ["Whisk", "Whisk hard as it cools. It will slowly thicken and trap air. Stop as soon as it holds a trail and looks like mousse, because it keeps firming up.", 300],
+      ["Serve", "Take it off the ice straight away and spoon into glasses. Eat it now or chill until needed.", 0]
+    ],
+    note: ["If it goes wrong", "If it turns grainy you've whisked too long: warm it gently until smooth again and whisk for less time. If it won't thicken, re-melt it with a little more chocolate. Higher-cocoa chocolate sets firmer, so use the lower end of the water range for 65% and the higher end for 74%."]
+  },
+  {
+    id: "chocolate-cream-mousse",
+    category: "puddings",
+    title: "Chocolate & Cream Mousse",
+    blurb: "A rich, creamy mousse made from melted chocolate folded into whipped double cream. No raw eggs.",
+    source: ["BBC Good Food", "https://www.bbcgoodfood.com"],
+    serves: 4, unit: "glasses",
+    chips: [["Serves 4"], ["15 min, plus 1 hr chilling"], ["Milk or dark chocolate"], ["No raw eggs"]],
+    ingredients: [
+      [125, "g", "milk or dark chocolate, chopped (100–150g)"],
+      [300, "ml", "double cream"],
+      [1, "pinch", "salt"]
+    ],
+    steps: [
+      ["Melt the chocolate", "Melt the chocolate with the salt, either in the microwave in short bursts or in a heatproof bowl over a pan of barely simmering water. Leave it to cool slightly.", 0],
+      ["Whip the cream", "Whip the double cream until it forms soft peaks. Don't take it further or the mousse will be stiff.", 0],
+      ["Fold together", "Stir a spoonful of the cream into the chocolate to loosen it, then gently fold in the rest until no streaks remain.", 0],
+      ["Chill", "Spoon into small glasses or bowls and chill until set.", 3600]
+    ],
+    note: ["Which chocolate", "Dark gives a deeper, less sweet mousse, and milk a softer, sweeter one. Use the larger amount of chocolate for a firmer set."]
+  },
+  {
     id: "choc-chip-cookies",
     category: "baking",
     title: "Chocolate Chip Cookies",
@@ -558,7 +600,7 @@ function renderRecipe(r) {
       <h1>${esc(r.title)}</h1>
       <p>${esc(r.blurb)}</p>
       <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>
-      ${r.source ? `<p class="source">Adapted from <a href="${r.source[1]}" target="_blank" rel="noopener">${esc(r.source[0])}</a></p>` : ""}
+      ${r.source ? `<p class="source">Adapted from ${r.source[1] ? `<a href="${r.source[1]}" target="_blank" rel="noopener">${esc(r.source[0])}</a>` : esc(r.source[0])}</p>` : ""}
     </div>
     <div class="grid">
       <aside class="panel">
