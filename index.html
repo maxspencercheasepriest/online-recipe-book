@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flick's Recipe Book</title>
+<title>Recipe Book</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -212,7 +212,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 <div class="tiles" aria-hidden="true"></div>
 <div class="wrap">
   <div class="topbar">
-    <a class="brand" href="#home">Flick's <em>Recipe Book</em></a>
+    <a class="brand" href="#home">The <em>Recipe Book</em></a>
     <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
   </div>
 
@@ -404,7 +404,7 @@ const RECIPES = [
     id: "gingerbread-cookies",
     category: "baking",
     title: "Gingerbread Cookies",
-    blurb: "Flick's version: soft, spiced gingerbread with treacle, honey and dark sugar melted into the butter for a deeper, chewier cookie.",
+    blurb: "Soft, spiced gingerbread with treacle, honey and dark sugar melted into the butter for a deeper, chewier cookie.",
     source: ["BBC Good Food", "https://www.bbcgoodfood.com"],
     serves: 20, unit: "cookies",
     chips: [["Makes 20"], ["Chill 1 hr", "hot"], ["180°C fan"], ["Bakes in 10 min"], ["Christmas"]],
@@ -432,13 +432,13 @@ const RECIPES = [
       ["Bake", "Bake until golden brown.", 570],
       ["Cool", "Leave to cool completely on a wire rack.", 0]
     ],
-    note: ["Flick's changes", "The original uses 170g light brown sugar beaten into softened butter, with 60g caster sugar for rolling the balls in. This version halves the caster sugar and makes up the rest with honey and dark sugar, melts everything together first, and uses egg white instead of a whole egg."]
+    note: ["Changes from the original", "The original uses 170g light brown sugar beaten into softened butter, with 60g caster sugar for rolling the balls in. This version halves the caster sugar and makes up the rest with honey and dark sugar, melts everything together first, and uses egg white instead of a whole egg."]
   },
   {
     id: "slow-cooker-chicken-tikka",
     category: "indian",
     title: "Slow Cooker Chicken Tikka Curry",
-    blurb: "Flick's version: chicken breast browned in butter and tikka powder, then slow-cooked in a creamy, gently spiced tomato sauce with cinnamon and cardamom.",
+    blurb: "Chicken breast browned in butter and tikka powder, then slow-cooked in a creamy, gently spiced tomato sauce with cinnamon and cardamom.",
     source: ["BBC Good Food", "https://www.bbcgoodfood.com"],
     serves: 4, unit: "people",
     chips: [["Serves 4"], ["Slow cooker"], ["5–7 hrs on low", "hot"], ["Browned in butter"]],
@@ -473,7 +473,7 @@ const RECIPES = [
     id: "char-siu-fried-rice",
     category: "asian",
     title: "Char Siu Pork Fried Rice",
-    blurb: "Flick's own: pork tenderloin marinated overnight in a sticky, smoky char siu sauce, diced and fried, then tossed through cold rice with caramelised spring onions.",
+    blurb: "Pork tenderloin marinated overnight in a sticky, smoky char siu sauce, diced and fried, then tossed through cold rice with caramelised spring onions.",
     serves: 2, unit: "people",
     chips: [["Serves 2"], ["Marinate overnight", "hot"], ["Cook the rice ahead"], ["About 30 min on the day"]],
     ingredients: [
@@ -504,7 +504,7 @@ const RECIPES = [
     id: "chicken-chorizo-stir-fry",
     category: "asian",
     title: "Chicken & Chorizo Stir-Fry",
-    blurb: "Flick's own: chicken fried in chorizo oil with paprika and spring onions, tossed with peppers, broccoli, noodles and a splash of soy.",
+    blurb: "Chicken fried in chorizo oil with paprika and spring onions, tossed with peppers, broccoli, noodles and a splash of soy.",
     serves: 2, unit: "people",
     chips: [["Serves 2"], ["About 25 min"], ["Chorizo oil does the work", "hot"]],
     ingredients: [
@@ -525,13 +525,13 @@ const RECIPES = [
       ["Add the veg", "Put the chorizo back in with the chicken, add the pepper and broccoli, and stir-fry until the veg is just tender but still has some bite.", 240],
       ["Toss it together", "Add the noodles and a splash of soy sauce and toss over the heat until everything is hot and coated.", 120]
     ],
-    note: ["Leftover greens", "The spring onion greens aren't in Flick's version, but they work scattered over the top to finish."]
+    note: ["Leftover greens", "The spring onion greens aren't in this version, but they work scattered over the top to finish."]
   },
   {
     id: "scorpion-chilli-chutney",
     category: "sides",
     title: "Trinidad Scorpion Chilli Chutney",
-    blurb: "Flick's own: sweet, smoky cherry tomato chutney with balsamic, ginger and a serious superhot kick.",
+    blurb: "Sweet, smoky cherry tomato chutney with balsamic, ginger and a serious superhot kick.",
     serves: 1, unit: "jar (300–350ml)",
     chips: [["Makes 1 jar"], ["About 1 hr"], ["Superhot", "hot"], ["Keep in the fridge"]],
     ingredients: [
@@ -559,7 +559,7 @@ const RECIPES = [
     id: "roast-joint-garlic-jus",
     category: "roasts",
     title: "Roast Joint with Garlic, Rosemary & Pan Jus",
-    blurb: "Flick's own: a joint roasted on a bed of halved onions, whole garlic bulbs and rosemary. Half the garlic goes on bread, and the rest of the tray becomes the jus.",
+    blurb: "A joint roasted on a bed of halved onions, whole garlic bulbs and rosemary. Half the garlic goes on bread, and the rest of the tray becomes the jus.",
     serves: 6, unit: "people",
     chips: [["Serves 6"], ["Rest 20–30 min", "hot"], ["Roasted garlic bread"], ["Jus from the tray"]],
     ingredients: [
@@ -792,16 +792,16 @@ function route() {
     renderRecipe(rec);
     document.getElementById("view-recipe").classList.add("active");
     setCrumbs([{ label: "Home", href: "#home" }, { label: c.name, href: "#" + c.id }, { label: rec.title }]);
-    document.title = rec.title + " · Flick's Recipe Book";
+    document.title = rec.title + " · Recipe Book";
   } else if (cat) {
     renderCategory(cat);
     document.getElementById("view-category").classList.add("active");
     setCrumbs([{ label: "Home", href: "#home" }, { label: cat.name }]);
-    document.title = cat.name + " · Flick's Recipe Book";
+    document.title = cat.name + " · Recipe Book";
   } else {
     document.getElementById("view-home").classList.add("active");
     setCrumbs([]);
-    document.title = "Flick's Recipe Book";
+    document.title = "Recipe Book";
   }
   window.scrollTo(0, 0);
 }

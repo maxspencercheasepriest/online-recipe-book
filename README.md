@@ -1,4 +1,4 @@
-# Flick's Recipe Book
+# Recipe Book
 
 A single-page recipe book. Open `index.html` in a browser; no build step or server needed.
 
