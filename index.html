@@ -145,7 +145,8 @@ a { color: var(--cobalt); }
   transition: border-color .15s, transform .15s;
 }
 .cat:hover { border-color: var(--cobalt); }
-.cat .swatch { height: 64px; background-color: var(--c); background-size: 32px 32px; margin-bottom: 10px; }
+.cat .swatch { height: 130px; background-color: var(--c); background-size: 32px 32px; margin-bottom: 10px; }
+.cat .swatch.pic { height: 130px; background-size: cover; background-position: center; border-bottom: 5px solid var(--c); }
 .cat h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.4rem; margin: 0; padding: 0 18px; line-height: 1.2; }
 .cat p { margin: 0; padding: 0 18px; color: var(--muted); font-size: 14px; }
 .cat .count { padding: 0 18px; font-size: 13px; font-weight: 600; color: var(--cobalt); font-variant-numeric: tabular-nums; }
@@ -1099,9 +1100,14 @@ const catOf = id => CATEGORIES.find(c => c.id === id);
 /* ---------- Views ---------- */
 function renderHome() {
   document.getElementById("cats").innerHTML = CATEGORIES.map(c => {
-    const n = RECIPES.filter(r => r.category === c.id).length;
+    const inCat = RECIPES.filter(r => r.category === c.id);
+    const n = inCat.length;
+    const cover = inCat.find(r => r.cover && r.photo) || inCat.find(r => r.photo && !r.standIn) || inCat.find(r => r.photo);
+    const top = cover
+      ? `<div class="swatch pic" style="--c:${c.color};background-image:url('${cover.photo}')" role="img" aria-label="${esc(cover.title)}"></div>`
+      : `<div class="swatch" style="${swatch(c.color)}"></div>`;
     return `<a class="cat" href="#${c.id}">
-      <div class="swatch" style="${swatch(c.color)}"></div>
+      ${top}
       <h2>${esc(c.name)}</h2>
       <p>${esc(c.blurb)}</p>
       <span class="count ${n ? "" : "zero"}">${countLabel(n)}</span>
