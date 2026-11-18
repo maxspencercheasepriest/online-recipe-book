@@ -83,6 +83,16 @@ a { color: var(--cobalt); }
 }
 .search-results { display: grid; gap: 8px; margin-top: 12px; }
 
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+  font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.tag:hover { border-color: var(--cobalt); color: var(--cobalt); }
+.tag .n { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.recipe-head .tags { margin-top: 6px; }
+.recipe-head .tag { font-size: 13px; padding: 4px 12px; }
 .section-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; }
 
 .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
@@ -233,13 +243,15 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
   <section class="view" id="view-home">
     <div class="hero">
       <h1>What are we <em>cooking</em>?</h1>
-      <p>Pick a category, or search every recipe by name or ingredient.</p>
+      <p>Pick a category or tag, or search every recipe by name or ingredient.</p>
       <div class="search">
         <label for="q" class="section-label" style="display:block;margin:0 0 6px">Search</label>
         <input id="q" type="search" placeholder="e.g. custard, port, apple" autocomplete="off">
       </div>
       <div class="search-results" id="results"></div>
     </div>
+    <div class="section-label">Browse by tag</div>
+    <div class="tags" id="home-tags"></div>
     <div class="section-label">Categories</div>
     <div class="cats" id="cats"></div>
   </section>
@@ -263,10 +275,16 @@ const CATEGORIES = [
   { id: "sides",      name: "Sides & Sauces",    blurb: "Veg, gravies, dressings and the bits that make a plate.",    color: "#2c6d75" }
 ];
 
+/* ---------- Tags (shown in this order) ---------- */
+const TAGS = ["Christmas", "Quick", "Weeknight", "Make-ahead", "Slow-cooked", "Sunday roast", "Spicy", "Vegetarian"];
+const tagSlug = t => "tag-" + t.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const tagFromSlug = slug => TAGS.find(t => tagSlug(t) === slug);
+
 /* ---------- Recipes ---------- */
 const RECIPES = [
   {
     id: "apple-nata-tarts",
+    tags: ["Christmas", "Vegetarian"],
     category: "puddings",
     title: "Apple Pastéis de Nata",
     photo: "images/apple-nata-tarts.jpg",
@@ -304,6 +322,7 @@ const RECIPES = [
   },
   {
     id: "apple-nata-tart",
+    tags: ["Christmas", "Make-ahead", "Vegetarian"],
     category: "puddings",
     title: "Apple Pastel de Nata Tart",
     blurb: "One big pastel de nata in a crisp puff pastry case, with spiced custard, port-glazed apples fanned on top and a blistered finish.",
@@ -341,6 +360,7 @@ const RECIPES = [
   },
   {
     id: "chocolate-water-mousse",
+    tags: ["Quick", "Vegetarian"],
     category: "puddings",
     title: "Two-Ingredient Chocolate Mousse",
     photo: "images/chocolate-water-mousse.jpg", standIn: true,
@@ -363,6 +383,7 @@ const RECIPES = [
   },
   {
     id: "chocolate-cream-mousse",
+    tags: ["Quick", "Make-ahead", "Vegetarian"],
     category: "puddings",
     title: "Chocolate & Cream Mousse",
     photo: "images/chocolate-cream-mousse.jpg", standIn: true,
@@ -385,6 +406,7 @@ const RECIPES = [
   },
   {
     id: "choc-chip-cookies",
+    tags: ["Make-ahead", "Vegetarian"],
     category: "baking",
     title: "Chocolate Chip Cookies",
     photo: "images/choc-chip-cookies.jpg", standIn: true,
@@ -420,6 +442,7 @@ const RECIPES = [
   },
   {
     id: "gingerbread-cookies",
+    tags: ["Christmas", "Vegetarian"],
     category: "baking",
     title: "Gingerbread Cookies",
     photo: "images/gingerbread-cookies.jpg", standIn: true,
@@ -455,6 +478,7 @@ const RECIPES = [
   },
   {
     id: "slow-cooker-chicken-tikka",
+    tags: ["Slow-cooked", "Make-ahead"],
     category: "indian",
     title: "Slow Cooker Chicken Tikka Curry",
     photo: "images/slow-cooker-chicken-tikka.jpg", standIn: true,
@@ -491,6 +515,7 @@ const RECIPES = [
   },
   {
     id: "char-siu-fried-rice",
+    tags: ["Weeknight", "Make-ahead"],
     category: "asian",
     title: "Char Siu Pork Fried Rice",
     photo: "images/char-siu-fried-rice.jpg", standIn: true,
@@ -523,6 +548,7 @@ const RECIPES = [
   },
   {
     id: "chicken-chorizo-stir-fry",
+    tags: ["Quick", "Weeknight"],
     category: "asian",
     title: "Chicken & Chorizo Stir-Fry",
     photo: "images/chicken-chorizo-stir-fry.jpg", standIn: true,
@@ -551,6 +577,7 @@ const RECIPES = [
   },
   {
     id: "brown-butter-tortelloni",
+    tags: ["Quick", "Weeknight"],
     category: "italian",
     title: "Brown Butter Tortelloni",
     photo: "images/brown-butter-tortelloni.jpg", standIn: true,
@@ -574,6 +601,7 @@ const RECIPES = [
   },
   {
     id: "honey-carrots-parsnips",
+    tags: ["Sunday roast", "Christmas", "Vegetarian"],
     category: "sides",
     title: "Honey-Glazed Carrots & Parsnips",
     photo: "images/honey-carrots-parsnips.jpg", standIn: true,
@@ -600,6 +628,7 @@ const RECIPES = [
   },
   {
     id: "scorpion-chilli-chutney",
+    tags: ["Spicy", "Make-ahead", "Vegetarian"],
     category: "sides",
     title: "Trinidad Scorpion Chilli Chutney",
     photo: "images/scorpion-chilli-chutney.jpg", standIn: true,
@@ -629,6 +658,7 @@ const RECIPES = [
   },
   {
     id: "roast-joint-garlic-jus",
+    tags: ["Sunday roast", "Christmas"],
     category: "roasts",
     title: "Roast Joint with Garlic, Rosemary & Pan Jus",
     photo: "images/roast-joint-garlic-jus.jpg", standIn: true,
@@ -715,6 +745,23 @@ function renderHome() {
   }).join("");
 }
 
+function renderHomeTags() {
+  document.getElementById("home-tags").innerHTML = TAGS.map(t => {
+    const n = RECIPES.filter(r => (r.tags || []).includes(t)).length;
+    return n ? `<a class="tag" href="#${tagSlug(t)}">${esc(t)} <span class="n">${n}</span></a>` : "";
+  }).join("");
+}
+
+function renderTag(t) {
+  const list = RECIPES.filter(r => (r.tags || []).includes(t));
+  document.getElementById("view-category").innerHTML = `
+    <div class="cat-head">
+      <h1>${esc(t)}</h1>
+      <p>${list.length === 1 ? "1 recipe" : list.length + " recipes"} tagged ${esc(t)}.</p>
+    </div>
+    <div class="cards">${list.map(recipeCard).join("")}</div>`;
+}
+
 function recipeCard(r) {
   const c = catOf(r.category);
   return `<a class="card" href="#${r.id}" style="border-top-color:${c.color}">
@@ -732,7 +779,7 @@ function renderSearch() {
   const out = document.getElementById("results");
   if (!q) { out.innerHTML = ""; return; }
   const hits = RECIPES.filter(r =>
-    (r.title + " " + r.blurb + " " + r.ingredients.map(i => i[2]).join(" ") + " " + r.chips.map(c => c[0]).join(" "))
+    (r.title + " " + r.blurb + " " + r.ingredients.map(i => i[2]).join(" ") + " " + r.chips.map(c => c[0]).join(" ") + " " + (r.tags || []).join(" "))
       .toLowerCase().includes(q));
   out.innerHTML = hits.length
     ? `<div class="cards">${hits.map(recipeCard).join("")}</div>`
@@ -760,6 +807,7 @@ function renderRecipe(r) {
       <h1>${esc(r.title)}</h1>
       <p>${esc(r.blurb)}</p>
       <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>
+      ${(r.tags || []).length ? `<div class="tags">${r.tags.map(t => `<a class="tag" href="#${tagSlug(t)}">${esc(t)}</a>`).join("")}</div>` : ""}
       ${r.source ? `<p class="source">Adapted from ${r.source[1] ? `<a href="${r.source[1]}" target="_blank" rel="noopener">${esc(r.source[0])}</a>` : esc(r.source[0])}</p>` : ""}
     </div>
     <div class="grid">
@@ -862,6 +910,7 @@ function route() {
   const id = location.hash.slice(1);
   const cat = catOf(id);
   const rec = RECIPES.find(r => r.id === id);
+  const tag = tagFromSlug(id);
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
 
   if (rec) {
@@ -870,6 +919,11 @@ function route() {
     document.getElementById("view-recipe").classList.add("active");
     setCrumbs([{ label: "Home", href: "#home" }, { label: c.name, href: "#" + c.id }, { label: rec.title }]);
     document.title = rec.title + " · Recipe Book";
+  } else if (tag) {
+    renderTag(tag);
+    document.getElementById("view-category").classList.add("active");
+    setCrumbs([{ label: "Home", href: "#home" }, { label: tag }]);
+    document.title = tag + " · Recipe Book";
   } else if (cat) {
     renderCategory(cat);
     document.getElementById("view-category").classList.add("active");
@@ -884,6 +938,7 @@ function route() {
 }
 
 renderHome();
+renderHomeTags();
 document.getElementById("q").addEventListener("input", renderSearch);
 window.addEventListener("hashchange", route);
 route();

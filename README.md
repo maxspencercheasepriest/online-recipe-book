@@ -14,6 +14,7 @@ Recipes live in the `RECIPES` array near the bottom of `index.html`. Each one lo
 {
   id: "url-friendly-id",          // used in the #link
   category: "asian",              // one of the CATEGORIES ids
+  tags: ["Quick", "Weeknight"],   // optional, any of the TAGS list
   title: "Recipe name",
   photo: "images/url-friendly-id.jpg",   // optional, shown on the card and recipe page
   standIn: true,                  // optional, labels the photo as a stand-in until a real one is added
@@ -32,4 +33,4 @@ Recipes live in the `RECIPES` array near the bottom of `index.html`. Each one lo
 }
 ```
 
-To add a category, add an entry to `CATEGORIES` with an `id`, `name`, `blurb` and tile `color`.
+To add a tag, add it to the `TAGS` list (it shows on the home page once a recipe uses it). To add a category, add an entry to `CATEGORIES` with an `id`, `name`, `blurb` and tile `color`.
