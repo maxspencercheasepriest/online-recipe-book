@@ -322,7 +322,7 @@ const CATEGORIES = [
 ];
 
 /* ---------- Tags (shown in this order) ---------- */
-const TAGS = ["Christmas", "Bonfire night", "Quick", "Weeknight", "Make-ahead", "Slow-cooked", "Sunday roast", "Spicy", "Vegetarian"];
+const TAGS = ["Christmas", "Bonfire night", "Quick", "Weeknight", "Make-ahead", "Slow-cooked", "Sunday roast", "Spicy", "Vegetarian", "Foraged"];
 const tagSlug = t => "tag-" + t.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 const tagFromSlug = slug => TAGS.find(t => tagSlug(t) === slug);
 
@@ -1118,6 +1118,37 @@ const RECIPES = [
     note: ["Other boozy options", "Dark rum is the classic. Baileys makes it creamier, orange liqueur goes well with dark chocolate, and a spiced rum works well on bonfire night. For a thicker hot chocolate, use 250g chocolate to the same milk."]
   },
   {
+    id: "gruit-ale",
+    category: "drinks",
+    tags: ["Make-ahead", "Foraged"],
+    title: "Gruit Ale",
+    blurb: "A medieval-style beer brewed with mugwort, yarrow and bog myrtle instead of hops. Herbal, earthy and slightly bitter. This is a one-gallon homebrew made from malt extract.",
+    serves: 8, unit: "bottles (500ml)",
+    chips: [["Makes about 4 litres"], ["About 5% ABV"], ["Ready in about 4 weeks", "hot"], ["Homebrew kit needed"]],
+    ingredients: [
+      [5, "litre", "water, plus extra to top up"],
+      [50, "g", "crystal malt, crushed (optional, for colour)"],
+      [600, "g", "light dried malt extract (DME)"],
+      [10, "g", "dried mugwort"],
+      [5, "g", "dried yarrow"],
+      [3, "g", "dried bog myrtle (sweet gale)"],
+      [6, "g", "ale yeast (about half a sachet, e.g. S-04)"],
+      [25, "g", "white sugar, for bottling"]
+    ],
+    steps: [
+      ["Sanitise everything", "Clean and sanitise anything that will touch the beer after the boil: demijohn, airlock, funnel, sieve, spoon and bottles. This step matters more than any other.", 0],
+      ["Steep the grain", "Heat the water to about 68°C, add the crystal malt in a muslin bag, and hold it there. Lift out the bag and let it drain.", 1800],
+      ["Boil with half the herbs", "Take the pan off the heat and stir in the malt extract until dissolved, so it doesn't scorch. Bring to a rolling boil, add half the mugwort, yarrow and bog myrtle, and boil. Watch it closely as it first comes to the boil, because it foams up.", 3000],
+      ["Add the rest of the herbs", "Add the remaining herbs for the last 10 minutes of the boil.", 600],
+      ["Cool fast", "Sit the pan in a sink of iced water and stir until it drops to about 20°C. Cooling quickly keeps it clean and clear.", 1800],
+      ["Into the demijohn", "Strain through a sanitised sieve and funnel into a 4.5 litre demijohn. Top up with cold boiled water to the shoulder, sprinkle in the yeast and fit the airlock.", 0],
+      ["Ferment", "Leave somewhere steady at 18–20°C for 1 to 2 weeks, until the airlock has stopped bubbling and the beer has started to clear."],
+      ["Bottle", "Dissolve the sugar in a splash of boiled water and stir it gently into the beer without disturbing the sediment. Then siphon into clean bottles and cap them."],
+      ["Condition", "Leave the bottles at room temperature for 2 weeks to carbonate, then chill. Pour carefully and leave the last bit of sediment in the bottle."]
+    ],
+    note: ["Before you brew", "Don't drink it if you're pregnant or trying to be, because mugwort and bog myrtle both affect the womb. Anyone allergic to ragweed or daisies should avoid it too. Only bottle once fermentation has fully finished, and stick to the sugar amount, because too much sugar can make bottles burst. If you forage the herbs yourself, be completely sure of your ID and pick away from roads."]
+  },
+  {
     id: "scorpion-chilli-chutney",
     tags: ["Spicy", "Make-ahead", "Vegetarian"],
     category: "sides",
@@ -1199,6 +1230,7 @@ function fmtQty(amount, unit) {
     if (unit === "g") { const oz = amount / 28.35; return (oz < 10 ? Math.round(oz * 4) / 4 : Math.round(oz)) + " oz"; }
     if (unit === "ml") { const c = amount / 240; return fmtNum(c) + " cup" + (c > 1.1 ? "s" : ""); }
   }
+  if (unit === "litre") return fmtNum(amount) + (amount > 1.05 ? " litres" : " litre");
   if (unit === "ml" && amount >= 1000) return (Math.round(amount / 100) / 10) + " litre" + (amount >= 1050 ? "s" : "");
   if (unit === "g" || unit === "ml") {
     return (amount < 50 ? Math.round(amount) : Math.round(amount / 5) * 5) + " " + unit;
