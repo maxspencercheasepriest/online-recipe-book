@@ -193,6 +193,10 @@ a { color: var(--cobalt); }
 .shop .ingredients small { font-size: 12px; }
 .shop-text { width: 100%; min-height: 160px; margin-top: 10px; font: 13px/1.5 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
 .copy-msg { font-size: 13px; margin: 8px 0 0; }
+.list-controls .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-out { flex-basis: 100%; }
+.share-out p { margin: 0; font-size: 14px; }
+.share-out p:empty { display: none; }
 .add-to-list { margin-top: 10px; display: grid; gap: 10px; justify-items: start; }
 .atl-panel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
 .atl-panel[hidden] { display: none; }
@@ -1798,14 +1802,75 @@ function renderLists() {
   });
 }
 
-let menuDraft = null; // ready-made menus are edited in memory until saved
+/* Share links: everything is packed into the #hash using only letters, digits and hyphens.
+   share-<name as hex>-<guests>-<date yyyymmdd or 0>-<recipe code + amount>... */
+function recipeCode(id) {
+  let h = 5381;
+  for (let i = 0; i < id.length; i++) h = ((h * 33) ^ id.charCodeAt(i)) >>> 0;
+  return h.toString(36).padStart(5, "0").slice(-5);
+}
+function toHex(str) { return Array.from(new TextEncoder().encode(str)).map(b => b.toString(16).padStart(2, "0")).join(""); }
+function fromHex(hex) {
+  const bytes = new Uint8Array((hex.match(/../g) || []).map(h => parseInt(h, 16)));
+  return new TextDecoder().decode(bytes);
+}
+function encodeShare(list) {
+  const parts = ["share", toHex(list.name.slice(0, 60)), String(list.guests), list.date ? list.date.replace(/-/g, "") : "0"];
+  list.items.forEach(e => parts.push(recipeCode(e.r) + (e.qty ? Math.round(e.qty * 10).toString(36) : "")));
+  return parts.join("-");
+}
+function decodeShare(id) {
+  try {
+    const t = id.split("-");
+    if (t[0] !== "share" || t.length < 4) return null;
+    const name = fromHex(t[1]) || "Shared list";
+    const guests = Math.max(1, Math.min(99, parseInt(t[2]) || 6));
+    const date = /^\d{8}$/.test(t[3]) ? t[3].slice(0, 4) + "-" + t[3].slice(4, 6) + "-" + t[3].slice(6) : "";
+    const byCode = new Map(RECIPES.map(r => [recipeCode(r.id), r.id]));
+    const items = t.slice(4).map(tok => {
+      const r = byCode.get(tok.slice(0, 5));
+      const q = tok.length > 5 ? parseInt(tok.slice(5), 36) / 10 : null;
+      return r ? { r, qty: q || null } : null;
+    }).filter(Boolean);
+    return { id, name, date, guests, items };
+  } catch (e) { return null; }
+}
+function shareUrl(list) { return location.href.split("#")[0] + "#" + encodeShare(list); }
+function listText(list) {
+  const shop = shoppingList(list);
+  const head = list.name + (list.date ? " (" + fmtDate(list.date) + ")" : "") + " · " + list.guests + " guests";
+  const recipes = list.items.map(e => { const r = recipeById(e.r); return r ? "- " + r.title + " (" + fmtNum(entryQty(e, list.guests)) + " " + r.unit + ")" : ""; }).filter(Boolean);
+  return [head, "", "Recipes:", ...recipes, "", "Shopping list:", ...shop.map(s => "- " + fmtQty(s.amount, s.unit) + " " + s.name), "", "Open the list: " + shareUrl(list)].join("\n");
+}
+async function copyOut(view, text, okMsg) {
+  const msg = view.querySelector("#share-msg");
+  const box = view.querySelector("#share-box");
+  try {
+    await navigator.clipboard.writeText(text);
+    box.hidden = true;
+    msg.textContent = okMsg;
+  } catch (e) {
+    box.hidden = false; box.value = text; box.focus(); box.select();
+    msg.textContent = "Couldn't copy automatically. It's selected in the box below, so copy it from there.";
+  }
+}
+
+let menuDraft = null; // ready-made menus and shared lists are edited in memory until saved
 function renderList(id) {
-  const isMenu = id.startsWith("menu-");
+  const isShared = id.startsWith("share-");
+  const isMenu = id.startsWith("menu-") || isShared;
   let list;
   if (isMenu) {
-    const m = MENUS.find(x => x.id === id);
-    if (!m) return false;
-    if (!menuDraft || menuDraft.id !== id) menuDraft = { id, name: m.name, date: "", guests: m.guests, items: m.items.map(r => ({ r, qty: null })) };
+    if (!menuDraft || menuDraft.id !== id) {
+      if (isShared) {
+        menuDraft = decodeShare(id);
+        if (!menuDraft) return false;
+      } else {
+        const m = MENUS.find(x => x.id === id);
+        if (!m) return false;
+        menuDraft = { id, name: m.name, date: "", guests: m.guests, items: m.items.map(r => ({ r, qty: null })) };
+      }
+    }
     list = menuDraft;
   } else {
     list = loadLists().find(l => l.id === id);
@@ -1830,7 +1895,7 @@ function renderList(id) {
   document.getElementById("view-category").innerHTML = `
     <div class="cat-head">
       <h1>${esc(list.name)}</h1>
-      <p>${isMenu ? "Ready-made menu. Change anything you like, then save it as your own list." : (list.date ? esc(fmtDate(list.date)) : "No date set")}</p>
+      <p>${isShared ? `Someone shared this list with you${list.date ? " for " + esc(fmtDate(list.date)) : ""}. Save it to keep your own copy.` : isMenu ? "Ready-made menu. Change anything you like, then save it as your own list." : (list.date ? esc(fmtDate(list.date)) : "No date set")}</p>
     </div>
     <div class="list-controls panel">
       <div class="servings">
@@ -1843,7 +1908,14 @@ function renderList(id) {
         ${isMenu ? "" : `<label for="ld" style="margin-left:8px">Date</label><input id="ld" class="date-input" type="date" value="${esc(list.date || "")}">`}
       </div>
       <div class="actions">
-        ${isMenu ? `<button type="button" class="btn primary" id="save-menu">Save as my list</button>` : `<button type="button" class="btn ghost danger" id="del-list">Delete list</button>`}
+        <button type="button" class="btn ghost" id="share-link">Share link</button>
+        <button type="button" class="btn ghost" id="copy-text">Copy as text</button>
+        ${isMenu ? `<button type="button" class="btn primary" id="save-menu">Save as my list</button>` : `<button type="button" class="btn ghost" id="dup-list">Duplicate</button>
+        <button type="button" class="btn ghost danger" id="del-list">Delete list</button>`}
+      </div>
+      <div class="share-out">
+        <p class="muted" id="share-msg" role="status"></p>
+        <textarea id="share-box" class="shop-text" hidden readonly aria-label="List to copy"></textarea>
       </div>
     </div>
 
@@ -1935,9 +2007,19 @@ function renderList(id) {
 
   const save = view.querySelector("#save-menu");
   if (save) save.addEventListener("click", () => {
-    const l = { id: newListId(), name: list.name, date: "", guests: list.guests, items: list.items.map(e => ({ ...e })) };
+    const l = { id: newListId(), name: list.name, date: list.date || "", guests: list.guests, items: list.items.map(e => ({ ...e })) };
     saveLists([...loadLists(), l]);
     menuDraft = null;
+    location.hash = l.id;
+  });
+  view.querySelector("#share-link").addEventListener("click", () =>
+    copyOut(view, shareUrl(list), "Link copied. Anyone who opens it sees this list and can save their own copy."));
+  view.querySelector("#copy-text").addEventListener("click", () =>
+    copyOut(view, listText(list), "Copied the recipes and shopping list as text, ready to paste into a message."));
+  const dup = view.querySelector("#dup-list");
+  if (dup) dup.addEventListener("click", () => {
+    const l = { id: newListId(), name: list.name + " (copy)", date: list.date || "", guests: list.guests, items: list.items.map(e => ({ ...e })) };
+    saveLists([...loadLists(), l]);
     location.hash = l.id;
   });
   const del = view.querySelector("#del-list");
@@ -2017,7 +2099,7 @@ function route() {
     document.getElementById("view-category").classList.add("active");
     setCrumbs([{ label: "Home", href: "#home" }, { label: "Event lists" }]);
     document.title = "Event lists · Recipe Book";
-  } else if ((id.startsWith("list-") || id.startsWith("menu-")) && renderList(id)) {
+  } else if ((id.startsWith("list-") || id.startsWith("menu-") || id.startsWith("share-")) && renderList(id)) {
     document.getElementById("view-category").classList.add("active");
     const nm = document.querySelector("#view-category h1").textContent;
     setCrumbs([{ label: "Home", href: "#home" }, { label: "Event lists", href: "#lists" }, { label: nm }]);

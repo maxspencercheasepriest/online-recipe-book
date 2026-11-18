@@ -40,4 +40,6 @@ To add a tag, add it to the `TAGS` list (it shows on the home page once a recipe
 
 `#lists` shows your event lists and the ready-made menus. A list holds recipes and a guest count. It builds a combined shopping list (with a Copy button) and splits the recipes into "Do ahead" (anything tagged Make-ahead) and "On the day". Recipes measured in people, glasses or mugs scale to the guest count, and anything else starts at one batch. Each amount can be changed by hand.
 
+Each list has **Share link** (a link with the whole list packed into it; whoever opens it sees the list and can save their own copy), **Copy as text** (recipes, shopping list and the link, ready to paste into a message) and **Duplicate**. Share links identify recipes by a short code made from the recipe `id`, so changing a recipe's `id` breaks old links to it.
+
 Your own lists are saved in the browser (localStorage), so they stay on the device you made them on. Ready-made menus live in the `MENUS` array in `index.html`: add one with an `id` starting `menu-`, a `name`, `guests`, `blurb` and a list of recipe ids.
