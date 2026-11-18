@@ -191,6 +191,8 @@ a { color: var(--cobalt); }
 .shop-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
 .shop-head h2 { margin: 0; }
 .shop .ingredients small { font-size: 12px; }
+.shop .ingredients .detail { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.4; margin-top: 2px; }
+.shop .ingredients li label { grid-template-columns: 20px 92px 1fr; }
 .shop-text { width: 100%; min-height: 160px; margin-top: 10px; font: 13px/1.5 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
 .copy-msg { font-size: 13px; margin: 8px 0 0; }
 .list-controls .actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1739,20 +1741,110 @@ function ingredientAmount(r, ing, q) {
   return ing[3] === "plus1" ? q + 1 : ing[0] * q / r.serves;
 }
 
+/* Shopping list: ingredients are grouped into one line per item (all eggs, all sugar, all milk...).
+   GROUPS: [pattern, group label, variant label or null to use the ingredient name, countsAs] */
+const GROUPS = [
+  [/egg yolk/, "Eggs", "yolks"], [/egg white/, "Eggs", "whites"], [/\beggs?\b/, "Eggs", "whole"],
+  [/golden caster sugar/, "Sugar", "golden caster"], [/caster sugar/, "Sugar", "caster"], [/demerara/, "Sugar", "demerara"],
+  [/icing sugar/, "Sugar", "icing"], [/dark brown/, "Sugar", "dark brown"], [/light brown/, "Sugar", "light brown"],
+  [/brown sugar/, "Sugar", "brown"], [/\bsugar syrup\b/, "Sugar syrup", null], [/\bsugar\b/, "Sugar", "white"],
+  [/milk chocolate/, "Chocolate", "milk"], [/dark chocolate|dark or milk chocolate/, "Chocolate", "dark"],
+  [/chocolate/, "Chocolate", null],
+  [/puff pastry/, "Puff pastry", null], [/shortcrust pastry/, "Shortcrust pastry", null],
+  [/\bmilk\b/, "Milk", null], [/double cream/, "Double cream", null], [/whipped cream/, "Whipped cream", null],
+  [/\bbutter\b(?! bean)/, "Butter", null],
+  [/cornflour/, "Cornflour", null], [/self-raising flour/, "Flour", "self-raising"], [/strong white bread flour|bread flour/, "Flour", "strong white"],
+  [/plain flour/, "Flour", "plain"], [/\bflour\b/, "Flour", null],
+  [/\bsalt\b/, "Salt", null], [/black pepper|peppercorns/, "Black pepper", null],
+  [/\bhoney\b/, "Honey", null], [/golden syrup/, "Golden syrup", null], [/black treacle/, "Black treacle", null],
+  [/wild garlic/, "Wild garlic", null], [/garlic bulb/, "Garlic", "bulbs"], [/garlic clove/, "Garlic", "cloves"],
+  [/spring onion/, "Spring onions", null], [/\bonions?\b/, "Onions", null],
+  [/lemon juice/, "Lemons", "juice"], [/\blemon/, "Lemons", null], [/lime juice/, "Limes", "juice"], [/\blime/, "Limes", null],
+  [/\borange\b/, "Oranges", null],
+  [/cinnamon stick/, "Cinnamon", "sticks"], [/ground cinnamon/, "Cinnamon", "ground"],
+  [/ground ginger/, "Ginger", "ground"], [/\bginger\b/, "Ginger", "fresh"],
+  [/vanilla/, "Vanilla extract", null], [/\boil\b/, "Oil", null],
+  [/chilli chutney/, "Trinidad Scorpion Chilli Chutney", null], [/\bchillies\b|\bchilli\b|jalapeño/, "Chillies", null],
+  [/\brice\b/, "Rice", null], [/chorizo/, "Chorizo", null], [/rosemary/, "Rosemary", null], [/soy sauce/, "Soy sauce", null],
+  [/hoisin/, "Hoisin sauce", null], [/ketchup/, "Ketchup", null], [/five spice/, "Chinese five spice", null],
+  [/liquid smoke/, "Liquid smoke", null], [/bicarbonate/, "Bicarbonate of soda", null], [/paprika/, "Paprika", null],
+  [/cloves\b/, "Cloves", null], [/star anise/, "Star anise", null], [/cardamom/, "Cardamom pods", null],
+  [/vinegar/, "Vinegar", null], [/tawny port|\bport\b/, "Tawny port", null], [/\bwine\b(?! yeast)/, "Wine", null], [/tequila/, "Tequila blanco", null],
+  [/bourbon|rye whiskey|\bwhisky\b/, "Whisky", null], [/\bapples?\b/, "Apples", null], [/\bwater\b/, "Water", null]
+];
+// Convert to a base unit per family so amounts add up.
+function unitFamily(u, amt) {
+  if (u === "g") return ["g", amt]; if (u === "kg") return ["g", amt * 1000];
+  if (u === "ml") return ["ml", amt]; if (u === "litre") return ["ml", amt * 1000];
+  if (u === "tsp") return ["tsp", amt]; if (u === "tbsp") return ["tsp", amt * 3];
+  return [u || "", amt];
+}
+function fmtFamily(fam, amt) {
+  if (fam === "g") return amt >= 1000 ? fmtQty(amt / 1000, "kg") : fmtQty(amt, "g");
+  if (fam === "ml") return fmtQty(amt, "ml");
+  if (fam === "tsp") return amt >= 3 ? fmtQty(amt / 3, "tbsp") : fmtQty(amt, "tsp");
+  return fmtQty(amt, fam);
+}
+function classify(name) {
+  const n = name.toLowerCase();
+  for (const [re, group, variant] of GROUPS) if (re.test(n)) return { group, variant };
+  return { group: name.charAt(0).toUpperCase() + name.slice(1), variant: null };
+}
+
 function shoppingList(list) {
-  const map = new Map();
+  const groups = new Map();
   list.items.forEach(e => {
     const r = recipeById(e.r); if (!r) return;
     const q = entryQty(e, list.guests);
     r.ingredients.forEach(ing => {
-      const key = ing[2].toLowerCase() + "|" + ing[1];
-      const cur = map.get(key) || { name: ing[2], unit: ing[1], amount: 0, from: [] };
-      cur.amount += ingredientAmount(r, ing, q);
-      if (!cur.from.includes(r.title)) cur.from.push(r.title);
-      map.set(key, cur);
+      const { group, variant } = classify(ing[2]);
+      const [fam, amt] = unitFamily(ing[1], ingredientAmount(r, ing, q));
+      const g = groups.get(group) || { name: group, totals: new Map(), variants: new Map(), from: new Set(), raw: [] };
+      g.totals.set(fam, (g.totals.get(fam) || 0) + amt);
+      const vKey = (variant || ing[2]) + "|" + fam;
+      const v = g.variants.get(vKey) || { label: variant || ing[2], fam, amt: 0 };
+      v.amt += amt; g.variants.set(vKey, v);
+      g.from.add(r.title);
+      g.raw.push(ing[2]);
+      groups.set(group, g);
     });
   });
-  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  // Grams per teaspoon, so spoon amounts can join weighed amounts of the same thing.
+  const DENSITY = { "Sugar": 4.2, "Golden syrup": 7, "Black treacle": 7, "Honey": 7, "Flour": 2.6, "Butter": 4.7 };
+  const singular = (label, amt) => (Math.abs(amt - 1) < 0.01 && /s$/.test(label)) ? label.slice(0, -1) : label;
+  return [...groups.values()].map(g => {
+    const hasG = g.totals.has("g"), hasMl = g.totals.has("ml"), hasTsp = g.totals.has("tsp");
+    const norm = (fam, amt) => {
+      if (fam === "tsp" && hasG && DENSITY[g.name]) return ["g", amt * DENSITY[g.name]];
+      if (fam === "tsp" && hasMl) return ["ml", amt * 5];
+      if (fam === "pinch" && (hasTsp || hasG || hasMl)) return norm("tsp", amt / 16);
+      return [fam, amt];
+    };
+    const totals = new Map();
+    g.totals.forEach((amt, fam) => { const [f, a] = norm(fam, amt); totals.set(f, (totals.get(f) || 0) + a); });
+    const variants = new Map();
+    g.variants.forEach(v => {
+      const [f, a] = norm(v.fam, v.amt);
+      const k = v.label + "|" + f;
+      const cur = variants.get(k) || { label: v.label, fam: f, amt: 0 };
+      cur.amt += a; variants.set(k, cur);
+    });
+    const vs = [...variants.values()];
+    const named = vs.filter(v => GROUPS.some(([re, grp, variant]) => grp === g.name && variant === v.label));
+    let qty, name = g.name, detail = "";
+    if (g.name === "Eggs") {
+      const total = vs.reduce((sum, v) => sum + v.amt, 0);
+      qty = fmtQty(total, "");
+      const parts = vs.filter(v => v.label !== "whole");
+      if (parts.length) detail = "includes " + parts.map(v => fmtQty(v.amt, "") + " " + singular(v.label, v.amt)).join(", ");
+    } else {
+      qty = [...totals.entries()].map(([fam, amt]) => fmtFamily(fam, amt)).join(" + ");
+      const distinct = [...new Set(g.raw)];
+      if (distinct.length === 1) name = distinct[0];
+      else if (named.length > 1) detail = named.map(v => fmtFamily(v.fam, v.amt) + " " + singular(v.label, v.amt)).join(" · ");
+    }
+    return { name, qty, detail, from: [...g.from] };
+  }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function listCard(l, href) {
@@ -1840,7 +1932,7 @@ function listText(list) {
   const shop = shoppingList(list);
   const head = list.name + (list.date ? " (" + fmtDate(list.date) + ")" : "") + " · " + list.guests + " guests";
   const recipes = list.items.map(e => { const r = recipeById(e.r); return r ? "- " + r.title + " (" + fmtNum(entryQty(e, list.guests)) + " " + r.unit + ")" : ""; }).filter(Boolean);
-  return [head, "", "Recipes:", ...recipes, "", "Shopping list:", ...shop.map(s => "- " + fmtQty(s.amount, s.unit) + " " + s.name), "", "Open the list: " + shareUrl(list)].join("\n");
+  return [head, "", "Recipes:", ...recipes, "", "Shopping list:", ...shop.map(s => "- " + s.qty + " " + s.name + (s.detail ? " (" + s.detail + ")" : "")), "", "Open the list: " + shareUrl(list)].join("\n");
 }
 async function copyOut(view, text, okMsg) {
   const msg = view.querySelector("#share-msg");
@@ -1958,10 +2050,10 @@ function renderList(id) {
         ${shop.length ? `<ul class="ingredients">${shop.map((s, i) => `
           <li><label for="sh-${i}">
             <input type="checkbox" id="sh-${i}">
-            <span class="qty">${fmtQty(s.amount, s.unit)}</span>
-            <span>${esc(s.name)}${s.from.length > 1 ? `<small class="muted"> · ${s.from.length} recipes</small>` : ""}</span>
+            <span class="qty">${esc(s.qty)}</span>
+            <span>${esc(s.name)}${s.from.length > 1 ? `<small class="muted"> · ${s.from.length} recipes</small>` : ""}${s.detail ? `<small class="detail">${esc(s.detail)}</small>` : ""}</span>
           </label></li>`).join("")}</ul>` : `<p class="muted">Add recipes to build the shopping list.</p>`}
-        <textarea id="shop-text" class="sr-only" readonly aria-hidden="true">${esc(list.name + " shopping list\n" + shop.map(s => "- " + fmtQty(s.amount, s.unit) + " " + s.name).join("\n"))}</textarea>
+        <textarea id="shop-text" class="sr-only" readonly aria-hidden="true">${esc(list.name + " shopping list\n" + shop.map(s => "- " + s.qty + " " + s.name + (s.detail ? " (" + s.detail + ")" : "")).join("\n"))}</textarea>
         <p class="copy-msg muted" id="copy-msg" role="status"></p>
       </aside>
     </div>`;
