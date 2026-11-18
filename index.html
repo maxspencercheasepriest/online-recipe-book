@@ -112,7 +112,18 @@ a { color: var(--cobalt); }
 }
 .card:hover { border-color: var(--cobalt); }
 .card .photo { margin: -18px -20px 4px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 11px 11px 0 0; }
+.card .photo { position: relative; }
 .card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .photo.placeholder { display: grid; place-items: center; }
+.card .photo.placeholder span {
+  font-family: var(--font-display); font-size: 1.25rem; color: #fff; text-align: center; padding: 0 18px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.35); text-wrap: balance;
+}
+.standin {
+  position: absolute; left: 10px; bottom: 10px; font-size: 11px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: rgba(22,33,61,.75); color: #fff;
+}
+.photo-wrap { position: relative; }
 .card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0; line-height: 1.2; }
 .card p { margin: 0; color: var(--muted); font-size: 14px; }
 .empty {
@@ -535,6 +546,7 @@ const RECIPES = [
     id: "brown-butter-tortelloni",
     category: "italian",
     title: "Brown Butter Tortelloni",
+    photo: "images/brown-butter-tortelloni.jpg", standIn: true,
     blurb: "Shop-bought tortelloni tossed in nutty browned butter and melted Parmesan. Dinner in about 10 minutes.",
     source: ["Silvana Franco, BBC Food", "https://www.bbc.co.uk/food"],
     serves: 2, unit: "people",
@@ -671,7 +683,9 @@ function renderHome() {
 function recipeCard(r) {
   const c = catOf(r.category);
   return `<a class="card" href="#${r.id}" style="border-top-color:${c.color}">
-    ${r.photo ? `<div class="photo"><img src="${r.photo}" alt="${esc(r.title)}" loading="lazy"></div>` : ""}
+    ${r.photo
+      ? `<div class="photo"><img src="${r.photo}" alt="${esc(r.title)}" loading="lazy">${r.standIn ? `<span class="standin">Stand-in photo</span>` : ""}</div>`
+      : `<div class="photo placeholder" style="${swatch(c.color)};background-size:32px 32px"><span>${esc(r.title)}</span></div>`}
     <h3>${esc(r.title)}</h3>
     <p>${esc(r.blurb)}</p>
     <div class="meta">${r.chips.slice(0, 2).map(ch => `<span class="chip">${esc(ch[0])}</span>`).join("")}</div>
@@ -707,7 +721,7 @@ function renderRecipe(r) {
   servings[r.id] = servings[r.id] || r.serves;
   view.innerHTML = `
     <div class="recipe-head">
-      ${r.photo ? `<img class="recipe-photo" src="${r.photo}" alt="${esc(r.title)}">` : ""}
+      ${r.photo ? `<div class="photo-wrap"><img class="recipe-photo" src="${r.photo}" alt="${esc(r.title)}">${r.standIn ? `<span class="standin">Stand-in photo</span>` : ""}</div>` : ""}
       <h1>${esc(r.title)}</h1>
       <p>${esc(r.blurb)}</p>
       <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>
