@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flick's Recipe Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Azulejo tile kitchen: cobalt on glazed white, custard-gold for highlights.
+     Layout: tile band + header, then home (category tile grid) / category (recipe cards) / recipe (ingredients | method). */
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --ink: #16213d;
+  --muted: #5a6582;
+  --cobalt: #1f4fa8;
+  --cobalt-soft: #e3ebf9;
+  --custard: #e2a72e;
+  --line: #d6deee;
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-body: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1424; --surface: #161e33; --ink: #e8edf8; --muted: #9aa6c4;
+    --cobalt: #7ea4ec; --cobalt-soft: #1d2a4a; --custard: #f0bd55; --line: #2a3655;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1424; --surface: #161e33; --ink: #e8edf8; --muted: #9aa6c4;
+  --cobalt: #7ea4ec; --cobalt-soft: #1d2a4a; --custard: #f0bd55; --line: #2a3655;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+}
+a { color: var(--cobalt); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+.tiles {
+  height: 48px;
+  background-color: var(--cobalt);
+  background-image:
+    radial-gradient(circle at 50% 50%, var(--surface) 0 5px, transparent 6px),
+    radial-gradient(circle at 0 0, var(--surface) 0 9px, transparent 10px),
+    radial-gradient(circle at 100% 0, var(--surface) 0 9px, transparent 10px),
+    radial-gradient(circle at 0 100%, var(--surface) 0 9px, transparent 10px),
+    radial-gradient(circle at 100% 100%, var(--surface) 0 9px, transparent 10px);
+  background-size: 48px 48px;
+}
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0 0; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-size: 1.35rem; color: var(--ink); text-decoration: none; }
+.brand em { color: var(--cobalt); }
+.crumbs { font-size: 14px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+
+.view { display: none; padding-bottom: 40px; }
+.view.active { display: block; }
+
+/* Home */
+.hero { padding: 36px 0 24px; }
+.hero h1 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(2.3rem, 5.5vw, 3.4rem); line-height: 1.08; margin: 0 0 10px;
+  text-wrap: balance;
+}
+.hero h1 em { color: var(--cobalt); }
+.hero p { margin: 0; color: var(--muted); max-width: 58ch; }
+
+.search { margin: 22px 0 6px; position: relative; max-width: 460px; }
+.search input {
+  width: 100%; font: 400 16px var(--font-body); color: var(--ink);
+  padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+}
+.search-results { display: grid; gap: 8px; margin-top: 12px; }
+
+.section-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; }
+
+.cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.cat {
+  display: grid; grid-template-rows: auto 1fr auto; gap: 4px;
+  text-decoration: none; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 0 0 16px; overflow: hidden; min-height: 168px;
+  transition: border-color .15s, transform .15s;
+}
+.cat:hover { border-color: var(--cobalt); }
+.cat .swatch { height: 64px; background-color: var(--c); background-size: 32px 32px; margin-bottom: 10px; }
+.cat h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.4rem; margin: 0; padding: 0 18px; line-height: 1.2; }
+.cat p { margin: 0; padding: 0 18px; color: var(--muted); font-size: 14px; }
+.cat .count { padding: 0 18px; font-size: 13px; font-weight: 600; color: var(--cobalt); font-variant-numeric: tabular-nums; }
+.cat .count.zero { color: var(--muted); font-weight: 500; }
+
+/* Category page */
+.cat-head { padding: 30px 0 18px; display: grid; gap: 6px; }
+.cat-head h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(2rem, 4.5vw, 2.8rem); margin: 0; line-height: 1.1; }
+.cat-head p { margin: 0; color: var(--muted); max-width: 60ch; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.card {
+  display: grid; gap: 8px; text-decoration: none; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px;
+  border-top: 5px solid var(--cobalt);
+}
+.card:hover { border-color: var(--cobalt); }
+.card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0; line-height: 1.2; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; }
+.empty {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 16px;
+  padding: 28px; color: var(--muted); max-width: 520px;
+}
+.empty strong { color: var(--ink); display: block; margin-bottom: 4px; }
+
+/* Recipe */
+.recipe-head { display: grid; gap: 6px; padding: 28px 0 20px; }
+.recipe-head h1 {
+  font-family: var(--font-display); font-weight: 400; font-size: clamp(1.9rem, 4.5vw, 2.6rem); margin: 0; line-height: 1.12;
+  text-wrap: balance;
+}
+.recipe-head p { margin: 0; color: var(--muted); max-width: 65ch; }
+.recipe-head p.source { font-size: 14px; margin-top: 4px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.recipe-head .meta { margin-top: 8px; }
+.chip {
+  font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 999px;
+  background: var(--cobalt-soft); color: var(--cobalt);
+}
+.chip.hot { background: color-mix(in srgb, var(--custard) 24%, transparent); color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 28px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.panel h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0 0 14px; }
+
+.servings { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.servings label { font-weight: 500; font-size: 14px; color: var(--muted); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.stepper button {
+  width: 36px; height: 34px; border: 0; background: var(--cobalt-soft); color: var(--cobalt);
+  font-size: 18px; cursor: pointer;
+}
+.stepper input {
+  width: 48px; height: 34px; border: 0; text-align: center; background: var(--surface); color: var(--ink);
+  font: 600 15px var(--font-body); font-variant-numeric: tabular-nums;
+}
+.units { display: inline-flex; gap: 4px; }
+.units button {
+  font: 500 13px var(--font-body); padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--muted);
+}
+.units button[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+
+ul.ingredients { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+ul.ingredients li label {
+  display: grid; grid-template-columns: 20px 76px 1fr; gap: 10px; align-items: baseline;
+  padding: 7px 4px; border-bottom: 1px dashed var(--line); cursor: pointer;
+}
+ul.ingredients li:last-child label { border-bottom: 0; }
+ul.ingredients input { accent-color: var(--cobalt); margin: 0; transform: translateY(2px); }
+.qty { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--cobalt); white-space: nowrap; }
+ul.ingredients input:checked ~ span { text-decoration: line-through; color: var(--muted); }
+
+ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: grid; gap: 14px; }
+ol.steps li {
+  counter-increment: step; display: grid; grid-template-columns: 40px 1fr; gap: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+}
+ol.steps li::before {
+  content: counter(step); font-family: var(--font-display); font-size: 1.5rem; line-height: 1;
+  color: var(--cobalt); width: 40px; height: 40px; border-radius: 10px; background: var(--cobalt-soft);
+  display: grid; place-items: center;
+}
+ol.steps h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+ol.steps p { margin: 0; }
+.timer {
+  margin-top: 10px; display: inline-flex; align-items: center; gap: 8px;
+  font: 500 13px var(--font-body); padding: 5px 12px 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.timer::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.timer.running::before { background: var(--custard); }
+.timer.done { background: var(--custard); border-color: var(--custard); color: #16213d; }
+.timer.done::before { background: #16213d; }
+
+.note {
+  margin-top: 20px; padding: 16px 18px; border-left: 4px solid var(--custard);
+  background: var(--surface); border-radius: 0 12px 12px 0;
+}
+.note strong { display: block; margin-bottom: 2px; }
+
+footer { color: var(--muted); font-size: 13px; padding: 10px 0 30px; border-top: 1px solid var(--line); }
+
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--custard); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .view.active { animation: rise .22s ease-out; }
+  @keyframes rise { from { transform: translateY(6px); } to { transform: none; } }
+  .cat:hover { transform: translateY(-2px); }
+}
+</style>
+</head>
+<body>
+<div class="tiles" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="#home">Flick's <em>Recipe Book</em></a>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+  </div>
+
+  <section class="view" id="view-home">
+    <div class="hero">
+      <h1>What are we <em>cooking</em>?</h1>
+      <p>Pick a category, or search every recipe by name or ingredient.</p>
+      <div class="search">
+        <label for="q" class="section-label" style="display:block;margin:0 0 6px">Search</label>
+        <input id="q" type="search" placeholder="e.g. custard, port, apple" autocomplete="off">
+      </div>
+      <div class="search-results" id="results"></div>
+    </div>
+    <div class="section-label">Categories</div>
+    <div class="cats" id="cats"></div>
+  </section>
+
+  <section class="view" id="view-category"></section>
+  <section class="view" id="view-recipe"></section>
+
+  <footer>Oven temperatures are fan, with conventional in brackets.</footer>
+</div>
+
+<script>
+/* ---------- Categories ---------- */
+const CATEGORIES = [
+  { id: "puddings",   name: "Puddings",          blurb: "Tarts, crumbles, custards and anything sweet after dinner.", color: "#1f4fa8" },
+  { id: "roasts",     name: "Roasts",            blurb: "Sunday dinners, joints, birds and all the trimmings.",      color: "#8a3b2e" },
+  { id: "indian",     name: "Indian",            blurb: "Curries, dals, breads and pickles.",                         color: "#c7731b" },
+  { id: "asian",      name: "Asian",             blurb: "Stir-fries, noodles, dumplings and broths.",                 color: "#a3242f" },
+  { id: "italian",    name: "Pasta & Italian",   blurb: "Sauces, bakes, risotto and fresh pasta.",                    color: "#3d7a3a" },
+  { id: "soups",      name: "Soups & Stews",     blurb: "One-pot dishes for cold nights.",                            color: "#5b4a8a" },
+  { id: "baking",     name: "Baking & Bread",    blurb: "Loaves, cakes, biscuits and pastry.",                        color: "#9a6b1f" },
+  { id: "sides",      name: "Sides & Sauces",    blurb: "Veg, gravies, dressings and the bits that make a plate.",    color: "#2c6d75" }
+];
+
+/* ---------- Recipes ---------- */
+const RECIPES = [
+  {
+    id: "apple-nata-tarts",
+    category: "puddings",
+    title: "Apple Pastéis de Nata",
+    blurb: "Individual tarts in spiral puff pastry cups, filled with spiced apple and custard and blistered in a very hot oven.",
+    serves: 12, unit: "tarts",
+    chips: [["Makes 12"], ["About 1 hr 15"], ["240°C fan", "hot"], ["12-hole muffin tin"], ["Christmas"]],
+    ingredients: [
+      [320, "g", "all-butter puff pastry (ready-rolled)"],
+      [250, "ml", "whole milk"],
+      [1, "", "cinnamon stick"],
+      [1, "", "strip lemon peel"],
+      [1, "", "strip orange peel"],
+      [4, "", "large egg yolks"],
+      [90, "g", "caster sugar"],
+      [20, "g", "cornflour"],
+      [1, "tsp", "vanilla extract"],
+      [2, "", "firm eating apples (Braeburn or Pink Lady)"],
+      [15, "g", "butter"],
+      [1, "tbsp", "light brown sugar"],
+      [0.25, "tsp", "ground cinnamon"],
+      [1, "tbsp", "tawny port (optional)"],
+      [1, "tbsp", "icing sugar, to dust"]
+    ],
+    steps: [
+      ["Infuse the milk", "Heat the milk with the cinnamon stick and the lemon and orange peel until just steaming. Take it off the heat and leave to infuse.", 600],
+      ["Make the pastry log", "Unroll the pastry and roll it up tightly from a short edge into a log. Chill so it slices cleanly.", 900],
+      ["Shape the cases", "Cut the log into 12 discs and sit each one spiral-side up in a buttered muffin tin. With a wet thumb, press from the centre outwards and up the sides until the pastry is thin and sits just above the rim. Chill again, and heat the oven as hot as it goes: 240°C fan (250°C).", 900],
+      ["Cook the apples", "Peel, core and dice the apples into 5mm pieces. Cook in the butter with the brown sugar, cinnamon and port until soft and sticky. Leave to cool.", 240],
+      ["Make the custard", "Whisk the yolks, caster sugar and cornflour until smooth. Strain the warm milk over them, whisking as you pour. Return to the pan and stir over medium-low heat until it just thickens to a pourable custard, then stir in the vanilla.", 180],
+      ["Fill", "Put a heaped teaspoon of apple in the bottom of each case, then pour over custard until each is about three-quarters full. Don't overfill, because the custard puffs up a lot.", 0],
+      ["Bake hot", "Bake on the top shelf until the pastry is deep golden and the custard is puffed and blistered with dark spots. If yours won't char, finish under a hot grill for a minute.", 840],
+      ["Cool and dust", "Leave in the tin for 10 minutes, then lift out onto a rack. Serve warm or at room temperature, dusted with icing sugar and a little cinnamon.", 600]
+    ],
+    note: ["Getting ahead", "They're best on the day they're baked, because the pastry goes soft overnight. Shape the cases ahead and freeze them in the tin, then fill and bake from frozen, adding a couple of minutes. The apple goes under the custard because it would burn on top at this heat."]
+  },
+  {
+    id: "apple-nata-tart",
+    category: "puddings",
+    title: "Apple Pastel de Nata Tart",
+    blurb: "One big pastel de nata in a crisp puff pastry case, with spiced custard, port-glazed apples fanned on top and a blistered finish.",
+    serves: 8, unit: "slices",
+    chips: [["Serves 8"], ["About 1 hr 45, plus cooling"], ["23cm tart tin"], ["Make on Christmas Eve", "hot"], ["Christmas"]],
+    ingredients: [
+      [320, "g", "all-butter puff pastry (ready-rolled)"],
+      [400, "ml", "whole milk"],
+      [1, "", "cinnamon stick"],
+      [1, "", "strip lemon peel"],
+      [1, "", "strip orange peel"],
+      [6, "", "large egg yolks"],
+      [100, "g", "caster sugar"],
+      [30, "g", "cornflour"],
+      [1, "tsp", "vanilla extract"],
+      [3, "", "firm eating apples (Braeburn or Pink Lady)"],
+      [25, "g", "butter"],
+      [2, "tbsp", "light brown sugar"],
+      [0.5, "tsp", "ground cinnamon"],
+      [2, "tbsp", "tawny port (optional)"],
+      [2, "tbsp", "apricot jam, to glaze"]
+    ],
+    steps: [
+      ["Infuse the milk", "Heat the milk with the cinnamon stick and the lemon and orange peel until just steaming. Take it off the heat and leave to infuse.", 600],
+      ["Line the tin", "Line a 23cm loose-bottomed tart tin with the pastry, pressing it well into the edges and leaving a little overhang. Prick the base with a fork and chill.", 1200],
+      ["Blind bake", "Line with baking paper and beans. Bake at 200°C fan (220°C) for 15 minutes, then remove the beans and bake 5 minutes more until the base looks dry. Trim the overhang.", 1200],
+      ["Cook the apples", "Peel, core and thinly slice the apples. Cook gently in the butter with the brown sugar, cinnamon and port until just softened but still holding their shape. Leave to cool.", 300],
+      ["Make the custard", "Whisk the yolks, caster sugar and cornflour until smooth. Strain the warm milk over them, whisking as you pour. Return to the pan and stir over medium-low heat until thick, then stir in the vanilla.", 240],
+      ["Assemble", "Pour the custard into the pastry case and smooth it out. Fan the apple slices over the top in overlapping circles.", 0],
+      ["Bake", "Bake at 180°C fan (200°C) until set at the edges with a slight wobble in the middle.", 1500],
+      ["Blister the top", "Put under a very hot grill for 2 to 4 minutes, watching closely, until the custard has dark scorched spots.", 180],
+      ["Glaze and cool", "Warm the jam and brush it over the apples. Cool completely before slicing so the custard sets.", 7200]
+    ],
+    note: ["Getting ahead", "Make it on Christmas Eve and keep it in the fridge overnight. Take it out an hour before serving and dust with icing sugar and cinnamon at the table."]
+  },
+  {
+    id: "choc-chip-cookies",
+    category: "baking",
+    title: "Chocolate Chip Cookies",
+    blurb: "Chewy, fudgy-centred cookies made with melted butter and roughly chopped milk and dark chocolate, with crushed crisps and flaky salt for a salty crunch.",
+    source: ["Joshua Weissman", "https://www.joshuaweissman.com"],
+    serves: 16, unit: "cookies",
+    chips: [["Makes 15–18 medium"], ["Chill 3 hrs to overnight", "hot"], ["160°C fan"], ["Bakes in 10 min"]],
+    ingredients: [
+      [100, "g", "granulated sugar"],
+      [150, "g", "light brown sugar, packed"],
+      [113, "g", "unsalted butter, melted"],
+      [1, "", "large egg"],
+      [1, "", "large egg yolk"],
+      [1, "tsp", "kosher salt (use half if it's fine table salt)"],
+      [0.5, "tsp", "bicarbonate of soda"],
+      [2, "tsp", "vanilla extract"],
+      [206, "g", "plain flour"],
+      [85, "g", "milk chocolate, roughly chopped"],
+      [100, "g", "dark chocolate (60–70%), roughly chopped"],
+      [15, "g", "salted kettle crisps, crushed by hand (optional)"],
+      [1, "pinch", "flaky sea salt, to finish"]
+    ],
+    steps: [
+      ["Mix the wet ingredients", "Whisk both sugars with the melted butter until smooth. Beat in the egg, then the yolk, until the mixture turns glossy. Whisk in the salt, bicarb and vanilla.", 0],
+      ["Fold in the flour", "Add the flour in two goes, folding with a spatula only until it disappears. Overmixing makes them tough. Fold in the crisps and both chocolates.", 0],
+      ["Chill the dough", "Cover and refrigerate for at least 3 to 4 hours, ideally overnight. The rest lets the flour hydrate and deepens the flavour.", 10800],
+      ["Heat the oven", "Heat the oven to 160°C fan (180°C) and line trays with lightly greased baking paper.", 0],
+      ["Scoop", "Pick a size. Small: 1 tbsp scoops, 12 to a tray, makes 20–24. Medium: 3 tbsp scoops, 6 to a tray, makes 15–18. Large: ⅓-cup ice cream scoop, 3 to a tray, flattened slightly with your palm, makes 8–9.", 0],
+      ["Bake", "Bake until golden at the edges but still slightly underdone in the middle. Small take 8–9 minutes, medium 10–11, large 14–15. The timer is set for medium.", 630],
+      ["Salt and rest", "Sprinkle with flaky salt straight away and leave on the tray for 5 minutes before moving to a rack. Keep leftovers in an airtight tin.", 300]
+    ],
+    note: ["Why chopped chocolate", "Chopped bars give you a mix of big molten pools and fine streaks through the dough, which chips don't. The large size gives the fudgiest middles and makes a good gift."]
+  },
+  {
+    id: "gingerbread-cookies",
+    category: "baking",
+    title: "Gingerbread Cookies",
+    blurb: "Flick's version: soft, spiced gingerbread with treacle, honey and dark sugar melted into the butter for a deeper, chewier cookie.",
+    source: ["BBC Good Food", "https://www.bbcgoodfood.com"],
+    serves: 20, unit: "cookies",
+    chips: [["Makes 20"], ["Chill 1 hr", "hot"], ["180°C fan"], ["Bakes in 10 min"], ["Christmas"]],
+    ingredients: [
+      [120, "g", "unsalted butter"],
+      [1.5, "tbsp", "black treacle"],
+      [170, "g", "soft light brown sugar"],
+      [30, "g", "golden caster sugar"],
+      [15, "g", "honey"],
+      [15, "g", "dark brown sugar"],
+      [0.5, "tsp", "fine sea salt"],
+      [200, "g", "plain flour"],
+      [0.25, "tsp", "bicarbonate of soda"],
+      [1.5, "tsp", "ground ginger"],
+      [0.5, "tsp", "ground cinnamon"],
+      [0.25, "tsp", "ground cloves"],
+      [1, "", "medium egg white"]
+    ],
+    steps: [
+      ["Melt the butter and sugars", "Put the butter, treacle, all the sugars, honey and salt in a pan and warm gently, stirring, until the butter has melted and everything is smooth. Don't let it boil.", 0],
+      ["Cool slightly", "Take it off the heat and let it cool for a few minutes, so the egg won't scramble when it goes in.", 600],
+      ["Mix the dough", "Stir in the flour, bicarb and spices, then the egg white, until you have a soft, even dough.", 0],
+      ["Chill", "Cover and chill in the fridge until firm enough to roll.", 3600],
+      ["Shape", "Heat the oven to 180°C fan (200°C, gas 4) and line two baking trays with baking paper. Roll the dough into 20 even balls, weighing them if you want them identical, and space them out on the trays.", 0],
+      ["Bake", "Bake until golden brown.", 570],
+      ["Cool", "Leave to cool completely on a wire rack.", 0]
+    ],
+    note: ["Flick's changes", "The original uses 170g light brown sugar beaten into softened butter, with 60g caster sugar for rolling the balls in. This version halves the caster sugar and makes up the rest with honey and dark sugar, melts everything together first, and uses egg white instead of a whole egg."]
+  },
+  {
+    id: "slow-cooker-chicken-tikka",
+    category: "indian",
+    title: "Slow Cooker Chicken Tikka Curry",
+    blurb: "Flick's version: chicken breast browned in butter and tikka powder, then slow-cooked in a creamy, gently spiced tomato sauce with cinnamon and cardamom.",
+    source: ["BBC Good Food", "https://www.bbcgoodfood.com"],
+    serves: 4, unit: "people",
+    chips: [["Serves 4"], ["Slow cooker"], ["5–7 hrs on low", "hot"], ["Browned in butter"]],
+    ingredients: [
+      [4, "", "chicken breasts, cut into chunks"],
+      [30, "g", "butter"],
+      [2, "tbsp", "tikka powder"],
+      [1, "", "large onion, chopped"],
+      [2, "", "garlic cloves, crushed"],
+      [1, "", "thumb-sized piece ginger, finely grated"],
+      [3, "tbsp", "tikka curry paste"],
+      [500, "ml", "passata"],
+      [1, "tbsp", "tomato purée"],
+      [1, "tbsp", "malt vinegar"],
+      [1, "tbsp", "light brown soft sugar"],
+      [1, "", "cinnamon stick"],
+      [5, "", "cardamom pods"],
+      [100, "ml", "double cream"],
+      [1, "", "handful coriander, chopped"]
+    ],
+    steps: [
+      ["Coat the chicken", "Toss the chicken chunks with the tikka powder and a little salt and pepper. Switch the slow cooker on to warm up.", 0],
+      ["Brown in butter", "Melt the butter in a wide frying pan over a high heat. Brown the chicken in batches so the pan isn't crowded, then move it into the slow cooker.", 0],
+      ["Soften the aromatics", "Turn the heat down and cook the onion, garlic and ginger in the same pan for a few minutes until soft. Add a splash of water, scrape up the browned bits from the bottom, and tip it all into the slow cooker.", 300],
+      ["Slow cook", "Add the curry paste, passata, tomato purée, vinegar, sugar, cinnamon and cardamom. Season well, put the lid on and cook on low for 5–7 hours or high for 4–5 hours.", 18000],
+      ["Finish with cream", "Stir in the cream and taste, adding a little more vinegar, sugar or salt if it needs it. Cook for another 10–15 minutes until hot.", 900],
+      ["Serve", "Scatter over the coriander and serve with basmati rice, plus naan and lime wedges if you like.", 0]
+    ],
+    note: ["No slow cooker?", "Brown everything as above, put the chicken back in the pan with the sauce ingredients, cover and simmer on the hob or in the oven at 140°C fan (160°C, gas 3) for about 2 hours. Breast dries out faster than thigh, so check it towards the shorter end of the cooking time."]
+  },
+  {
+    id: "char-siu-fried-rice",
+    category: "asian",
+    title: "Char Siu Pork Fried Rice",
+    blurb: "Flick's own: pork tenderloin marinated overnight in a sticky, smoky char siu sauce, diced and fried, then tossed through cold rice with caramelised spring onions.",
+    serves: 2, unit: "people",
+    chips: [["Serves 2"], ["Marinate overnight", "hot"], ["Cook the rice ahead"], ["About 30 min on the day"]],
+    ingredients: [
+      [1, "", "pork tenderloin (about 450g)"],
+      [3, "tbsp", "ketchup"],
+      [3, "tbsp", "honey"],
+      [1, "tbsp", "hoisin sauce"],
+      [1, "tsp", "Chinese five spice"],
+      [0.5, "tsp", "liquid smoke"],
+      [3, "cup", "long-grain rice (1 cup per person, plus 1 for the pot)", "plus1"],
+      [1, "tsp", "salt, for the rice water"],
+      [4, "", "spring onions"],
+      [1, "tbsp", "neutral oil, for frying"]
+    ],
+    steps: [
+      ["Score and stab the pork", "Score the tenderloin all over in a criss-cross, then stab it all over with a fork so the marinade gets right in.", 0],
+      ["Marinate overnight", "Mix the ketchup, honey, hoisin, five spice and liquid smoke. Put the pork and sauce in a freezer bag, squeeze out the air, rub the sauce in, and leave in the fridge overnight.", 0],
+      ["Cook and chill the rice", "Boil the rice in plenty of salted water until just tender. Drain, rinse under cold running water until cool, and put it in the fridge. This can be done the day before too.", 600],
+      ["Slice the spring onions", "Finely slice the spring onions and keep the whites and greens separate.", 0],
+      ["Fry the pork", "Dice the pork and fry it in a hot pan with a little oil and all the marinade until cooked through and sticky at the edges. Lift the pork out and keep the oils and sauce in the pan.", 480],
+      ["Caramelise the whites", "Fry the spring onion whites in the pan juices until soft and caramelised.", 240],
+      ["Fry the rice", "Add the cold rice and toss it through the onions and sauce until hot and coated.", 300],
+      ["Bring it together", "Tip the pork and any sauce back in, add the spring onion greens, mix well and serve.", 0]
+    ],
+    note: ["Why cold rice", "Rinsed, chilled rice is drier and the grains stay separate, so it fries instead of steaming into a clump. The rice scales at one cup per person plus one for the pot, so change the number of people and it adjusts."]
+  }
+];
+
+/* ---------- Formatting ---------- */
+let metric = true;
+const servings = {};
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function fmtNum(n) {
+  if (n >= 10) return String(Math.round(n));
+  const fr = [[0.25,"¼"],[0.5,"½"],[0.75,"¾"],[0.33,"⅓"],[0.67,"⅔"]];
+  const whole = Math.floor(n), rem = n - whole;
+  if (rem < 0.08) return String(whole || "¼");
+  if (rem > 0.92) return String(whole + 1);
+  let best = fr[0];
+  for (const f of fr) if (Math.abs(f[0] - rem) < Math.abs(best[0] - rem)) best = f;
+  return (whole ? whole : "") + best[1];
+}
+function fmtQty(amount, unit) {
+  if (!metric) {
+    if (unit === "g") { const oz = amount / 28.35; return (oz < 10 ? Math.round(oz * 4) / 4 : Math.round(oz)) + " oz"; }
+    if (unit === "ml") { const c = amount / 240; return fmtNum(c) + " cup" + (c > 1.1 ? "s" : ""); }
+  }
+  if (unit === "g" || unit === "ml") {
+    return (amount < 50 ? Math.round(amount) : Math.round(amount / 5) * 5) + " " + unit;
+  }
+  if (!unit) return fmtNum(Math.max(1, Math.round(amount * 2) / 2));
+  if (unit === "cup") return fmtNum(amount) + (amount > 1.1 ? " cups" : " cup");
+  return fmtNum(amount) + " " + unit;
+}
+function fmtTime(s) {
+  if (s >= 3600) { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h + " hr" + (m ? " " + m + " min" : ""); }
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+const fmtLabel = s => s >= 3600 ? fmtTime(s) : Math.round(s / 60) + " min";
+
+function swatch(color) {
+  return `background-color:${color};background-image:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.85) 0 3px, transparent 4px),
+    radial-gradient(circle at 0 0, rgba(255,255,255,.85) 0 6px, transparent 7px),
+    radial-gradient(circle at 100% 0, rgba(255,255,255,.85) 0 6px, transparent 7px),
+    radial-gradient(circle at 0 100%, rgba(255,255,255,.85) 0 6px, transparent 7px),
+    radial-gradient(circle at 100% 100%, rgba(255,255,255,.85) 0 6px, transparent 7px)`;
+}
+const countLabel = n => n === 0 ? "No recipes yet" : n === 1 ? "1 recipe" : n + " recipes";
+const catOf = id => CATEGORIES.find(c => c.id === id);
+
+/* ---------- Views ---------- */
+function renderHome() {
+  document.getElementById("cats").innerHTML = CATEGORIES.map(c => {
+    const n = RECIPES.filter(r => r.category === c.id).length;
+    return `<a class="cat" href="#${c.id}">
+      <div class="swatch" style="${swatch(c.color)}"></div>
+      <h2>${esc(c.name)}</h2>
+      <p>${esc(c.blurb)}</p>
+      <span class="count ${n ? "" : "zero"}">${countLabel(n)}</span>
+    </a>`;
+  }).join("");
+}
+
+function recipeCard(r) {
+  const c = catOf(r.category);
+  return `<a class="card" href="#${r.id}" style="border-top-color:${c.color}">
+    <h3>${esc(r.title)}</h3>
+    <p>${esc(r.blurb)}</p>
+    <div class="meta">${r.chips.slice(0, 2).map(ch => `<span class="chip">${esc(ch[0])}</span>`).join("")}</div>
+  </a>`;
+}
+
+function renderSearch() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const out = document.getElementById("results");
+  if (!q) { out.innerHTML = ""; return; }
+  const hits = RECIPES.filter(r =>
+    (r.title + " " + r.blurb + " " + r.ingredients.map(i => i[2]).join(" ") + " " + r.chips.map(c => c[0]).join(" "))
+      .toLowerCase().includes(q));
+  out.innerHTML = hits.length
+    ? `<div class="cards">${hits.map(recipeCard).join("")}</div>`
+    : `<p style="color:var(--muted);margin:0">No recipes match “${esc(q)}”.</p>`;
+}
+
+function renderCategory(c) {
+  const list = RECIPES.filter(r => r.category === c.id);
+  document.getElementById("view-category").innerHTML = `
+    <div class="cat-head">
+      <h1>${esc(c.name)}</h1>
+      <p>${esc(c.blurb)}</p>
+    </div>
+    ${list.length
+      ? `<div class="cards">${list.map(recipeCard).join("")}</div>`
+      : `<div class="empty"><strong>Nothing in ${esc(c.name)} yet.</strong>Recipes you add to this category will show up here.</div>`}`;
+}
+
+function renderRecipe(r) {
+  const view = document.getElementById("view-recipe");
+  servings[r.id] = servings[r.id] || r.serves;
+  view.innerHTML = `
+    <div class="recipe-head">
+      <h1>${esc(r.title)}</h1>
+      <p>${esc(r.blurb)}</p>
+      <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>
+      ${r.source ? `<p class="source">Adapted from <a href="${r.source[1]}" target="_blank" rel="noopener">${esc(r.source[0])}</a></p>` : ""}
+    </div>
+    <div class="grid">
+      <aside class="panel">
+        <h2>Ingredients</h2>
+        <div class="servings">
+          <label for="srv">Makes</label>
+          <span class="stepper">
+            <button type="button" aria-label="Fewer" data-d="-1">−</button>
+            <input id="srv" type="number" min="1" max="99" value="${servings[r.id]}">
+            <button type="button" aria-label="More" data-d="1">+</button>
+          </span>
+          <span style="color:var(--muted);font-size:14px">${esc(r.unit)}</span>
+          <span class="units" role="group" aria-label="Units">
+            <button type="button" data-u="metric" aria-pressed="${metric}">g/ml</button>
+            <button type="button" data-u="us" aria-pressed="${!metric}">oz/cups</button>
+          </span>
+        </div>
+        <ul class="ingredients">
+          ${r.ingredients.map((ing, i) => `
+            <li><label for="ing-${i}">
+              <input type="checkbox" id="ing-${i}">
+              <span class="qty"></span>
+              <span>${esc(ing[2])}</span>
+            </label></li>`).join("")}
+        </ul>
+      </aside>
+      <div>
+        <ol class="steps">
+          ${r.steps.map((s, i) => `
+            <li><div>
+              <h3>${esc(s[0])}</h3>
+              <p>${esc(s[1])}</p>
+              ${s[2] ? `<button type="button" class="timer" id="tm-${i}" data-secs="${s[2]}">${fmtLabel(s[2])} timer</button>` : ""}
+            </div></li>`).join("")}
+        </ol>
+        ${r.note ? `<div class="note"><strong>${esc(r.note[0])}</strong>${esc(r.note[1])}</div>` : ""}
+      </div>
+    </div>`;
+
+  const input = view.querySelector("#srv");
+  const refresh = () => view.querySelectorAll(".qty").forEach((q, i) => {
+    const ing = r.ingredients[i];
+    const amt = ing[3] === "plus1" ? servings[r.id] + 1 : ing[0] * servings[r.id] / r.serves;
+    q.textContent = fmtQty(amt, ing[1]);
+  });
+  const update = v => {
+    v = Math.max(1, Math.min(99, parseInt(v) || 1));
+    servings[r.id] = v; input.value = v; refresh();
+  };
+  input.addEventListener("change", () => update(input.value));
+  view.querySelectorAll(".stepper button").forEach(b =>
+    b.addEventListener("click", () => update(servings[r.id] + Number(b.dataset.d))));
+  view.querySelectorAll(".units button").forEach(b =>
+    b.addEventListener("click", () => {
+      metric = b.dataset.u === "metric";
+      view.querySelectorAll(".units button").forEach(x =>
+        x.setAttribute("aria-pressed", String((x.dataset.u === "metric") === metric)));
+      refresh();
+    }));
+  view.querySelectorAll(".timer").forEach(setupTimer);
+  refresh();
+}
+
+let activeTimers = [];
+function setupTimer(btn) {
+  const total = Number(btn.dataset.secs);
+  let left = total, iv = null;
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("done")) {
+      btn.classList.remove("done"); left = total; btn.textContent = fmtLabel(total) + " timer"; return;
+    }
+    if (iv) { clearInterval(iv); iv = null; btn.classList.remove("running"); btn.textContent = "Paused · " + fmtTime(left); return; }
+    btn.classList.add("running"); btn.textContent = fmtTime(left);
+    iv = setInterval(() => {
+      left--;
+      if (left <= 0) {
+        clearInterval(iv); iv = null;
+        btn.classList.remove("running"); btn.classList.add("done");
+        btn.textContent = "Done · tap to reset";
+        try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+        return;
+      }
+      btn.textContent = fmtTime(left);
+    }, 1000);
+    activeTimers.push(() => clearInterval(iv));
+  });
+}
+
+/* ---------- Routing ---------- */
+function setCrumbs(parts) {
+  document.getElementById("crumbs").innerHTML = parts.map((p, i) =>
+    (i ? "<span aria-hidden='true'>›</span>" : "") +
+    (p.href ? `<a href="${p.href}">${esc(p.label)}</a>` : `<span aria-current="page">${esc(p.label)}</span>`)
+  ).join("");
+}
+
+function route() {
+  activeTimers.forEach(f => f()); activeTimers = [];
+  const id = location.hash.slice(1);
+  const cat = catOf(id);
+  const rec = RECIPES.find(r => r.id === id);
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+
+  if (rec) {
+    const c = catOf(rec.category);
+    renderRecipe(rec);
+    document.getElementById("view-recipe").classList.add("active");
+    setCrumbs([{ label: "Home", href: "#home" }, { label: c.name, href: "#" + c.id }, { label: rec.title }]);
+    document.title = rec.title + " · Flick's Recipe Book";
+  } else if (cat) {
+    renderCategory(cat);
+    document.getElementById("view-category").classList.add("active");
+    setCrumbs([{ label: "Home", href: "#home" }, { label: cat.name }]);
+    document.title = cat.name + " · Flick's Recipe Book";
+  } else {
+    document.getElementById("view-home").classList.add("active");
+    setCrumbs([]);
+    document.title = "Flick's Recipe Book";
+  }
+  window.scrollTo(0, 0);
+}
+
+renderHome();
+document.getElementById("q").addEventListener("input", renderSearch);
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
