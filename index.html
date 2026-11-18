@@ -315,11 +315,13 @@ const CATEGORIES = [
   { id: "italian",    name: "Pasta & Italian",   blurb: "Sauces, bakes, risotto and fresh pasta.",                    color: "#3d7a3a" },
   { id: "soups",      name: "Soups & Stews",     blurb: "One-pot dishes for cold nights.",                            color: "#5b4a8a" },
   { id: "baking",     name: "Baking & Bread",    blurb: "Loaves, cakes, biscuits and pastry.",                        color: "#9a6b1f" },
-  { id: "sides",      name: "Sides & Sauces",    blurb: "Veg, gravies, dressings and the bits that make a plate.",    color: "#2c6d75" }
+  { id: "sides",      name: "Sides & Sauces",    blurb: "Veg, gravies, dressings and the bits that make a plate.",    color: "#2c6d75" },
+  { id: "party",      name: "Party & Snacks",    blurb: "Bonfire treats, baps and things to eat standing up.",        color: "#b23a6b" },
+  { id: "drinks",     name: "Drinks",            blurb: "Mulled, spiced and festive things to drink.",                color: "#6b2440" }
 ];
 
 /* ---------- Tags (shown in this order) ---------- */
-const TAGS = ["Christmas", "Quick", "Weeknight", "Make-ahead", "Slow-cooked", "Sunday roast", "Spicy", "Vegetarian"];
+const TAGS = ["Christmas", "Bonfire night", "Quick", "Weeknight", "Make-ahead", "Slow-cooked", "Sunday roast", "Spicy", "Vegetarian"];
 const tagSlug = t => "tag-" + t.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 const tagFromSlug = slug => TAGS.find(t => tagSlug(t) === slug);
 
@@ -670,6 +672,312 @@ const RECIPES = [
     note: ["Tips", "Use big carrots rather than baby ones, and fresh rosemary rather than dried. Use two trays if one is crowded."]
   },
   {
+    id: "parkin",
+    category: "baking",
+    tags: ["Bonfire night", "Make-ahead", "Vegetarian"],
+    title: "Parkin",
+    blurb: "Dark, sticky oat and ginger cake made with black treacle. The northern bonfire night classic, and it gets better the longer you leave it.",
+    serves: 16, unit: "squares",
+    chips: [["Makes 16 squares"], ["1 hr 15"], ["Best after 3 days", "hot"], ["20cm square tin"]],
+    ingredients: [
+      [200, "g", "butter"],
+      [100, "g", "black treacle"],
+      [100, "g", "golden syrup"],
+      [100, "g", "dark brown soft sugar"],
+      [125, "g", "medium oatmeal (or porridge oats, blitzed)"],
+      [200, "g", "self-raising flour"],
+      [1, "tbsp", "ground ginger"],
+      [1, "tsp", "mixed spice"],
+      [2, "", "large eggs"],
+      [3, "tbsp", "milk"]
+    ],
+    steps: [
+      ["Get ready", "Heat the oven to 150°C fan (170°C, gas 3) and line a 20cm square tin with baking paper.", 0],
+      ["Melt", "Gently melt the butter, treacle, syrup and sugar together in a pan, stirring, until smooth. Leave to cool for a few minutes.", 300],
+      ["Mix", "Stir the oatmeal, flour and spices together in a big bowl. Beat the eggs with the milk. Pour the melted mixture into the dry ingredients, then the eggs, and stir to a smooth, runny batter.", 0],
+      ["Bake", "Pour into the tin and bake until firm to the touch and a skewer comes out clean.", 3000],
+      ["Wrap and wait", "Cool in the tin, then wrap the whole slab in baking paper and foil. Leave it for 3 to 5 days before cutting. It turns properly sticky as it sits.", 0]
+    ],
+    note: ["Bonfire night timing", "Make it on the weekend before 5 November so it's at its stickiest on the night."]
+  },
+  {
+    id: "bonfire-toffee",
+    category: "party",
+    tags: ["Bonfire night", "Make-ahead", "Vegetarian"],
+    title: "Bonfire Toffee",
+    blurb: "Hard, glossy black treacle toffee set in a tin and smashed into shards. Bonfire night in a paper bag.",
+    serves: 1, unit: "tin (20cm)",
+    chips: [["One 20cm tin"], ["30 min, plus setting"], ["Sugar thermometer", "hot"]],
+    ingredients: [
+      [450, "g", "demerara sugar"],
+      [120, "ml", "water"],
+      [115, "g", "butter, plus extra for the tin"],
+      [115, "g", "black treacle"],
+      [115, "g", "golden syrup"],
+      [1, "tsp", "vinegar (white wine or malt)"]
+    ],
+    steps: [
+      ["Prepare the tin", "Line a 20cm square tin with foil and butter it well.", 0],
+      ["Dissolve the sugar", "Warm the sugar and water in a large, heavy pan over a low heat, stirring until every grain has dissolved. Don't let it boil yet.", 0],
+      ["Add the rest", "Stir in the butter, treacle, syrup and vinegar until melted.", 0],
+      ["Boil to hard crack", "Turn up the heat and boil without stirring until it reaches 150°C on a sugar thermometer (hard crack). A drip in cold water should snap cleanly.", 1080],
+      ["Pour and score", "Pour into the tin straight away. After about 15 minutes, score it into pieces with an oiled knife.", 900],
+      ["Set and smash", "Leave until completely hard, then turn out and break it up along the lines or with a rolling pin. Keep in an airtight tin between baking paper.", 3600]
+    ],
+    note: ["Be careful", "Boiling sugar sticks to skin and burns badly. Keep children and pets away from the pan, and have a bowl of cold water nearby."]
+  },
+  {
+    id: "toffee-apples",
+    category: "party",
+    tags: ["Bonfire night", "Vegetarian"],
+    title: "Toffee Apples",
+    blurb: "Crisp apples on sticks with a glassy, bright red toffee shell.",
+    serves: 8, unit: "apples",
+    chips: [["Makes 8"], ["30 min"], ["Sugar thermometer", "hot"]],
+    ingredients: [
+      [8, "", "small eating apples"],
+      [8, "", "wooden sticks or skewers"],
+      [400, "g", "golden caster sugar"],
+      [100, "ml", "water"],
+      [4, "tbsp", "golden syrup"],
+      [1, "tsp", "vinegar"],
+      [1, "", "few drops red food colouring (optional)"]
+    ],
+    steps: [
+      ["Prep the apples", "Dip the apples in just-boiled water for a few seconds to remove the waxy coating, then dry well. Twist off the stalks and push a stick firmly into each. Line a tray with baking paper.", 0],
+      ["Make the toffee", "Dissolve the sugar in the water over a low heat, then add the syrup and vinegar and boil without stirring until it reaches 150°C (hard crack). Stir in the food colouring.", 600],
+      ["Dip", "Tilt the pan and twirl each apple in the toffee to coat, let the excess drip off, then stand them on the tray.", 0],
+      ["Set", "Leave to harden before eating. They're best eaten the same day.", 900]
+    ],
+    note: ["No thermometer?", "Drip a little toffee into cold water. If it sets hard and snaps, it's ready. If it bends, keep boiling."]
+  },
+  {
+    id: "ember-jacket-potatoes",
+    category: "sides",
+    tags: ["Bonfire night"],
+    title: "Fire-Pit Jacket Potatoes",
+    blurb: "Foil-wrapped potatoes buried in the embers until fluffy inside, then loaded with butter, cheese and chilli chutney.",
+    serves: 4, unit: "potatoes",
+    chips: [["Serves 4"], ["About 1 hr"], ["Cook in the embers", "hot"]],
+    ingredients: [
+      [4, "", "large baking potatoes"],
+      [1, "tbsp", "olive oil"],
+      [1, "tsp", "flaky salt"],
+      [40, "g", "butter"],
+      [100, "g", "Cheddar, grated"],
+      [4, "tbsp", "Trinidad Scorpion Chilli Chutney (or any chutney)"]
+    ],
+    steps: [
+      ["Prep", "Prick the potatoes all over with a fork, rub with oil and salt, and wrap each one tightly in two layers of foil.", 0],
+      ["Bury in the embers", "Once the fire has burnt down to glowing embers, nestle the potatoes in and rake embers over the top. Avoid open flames, which scorch the outside before the middle cooks.", 0],
+      ["Cook and turn", "Turn them every 15 minutes with tongs. They're done when a skewer slides in through the foil with no resistance.", 3000],
+      ["Load up", "Unwrap carefully, split open, and fill with butter, cheese and a spoon of chutney."]
+    ],
+    note: ["No fire?", "Bake them unwrapped at 200°C fan (220°C, gas 7) for about an hour for crisp skins."]
+  },
+  {
+    id: "sausage-onion-baps",
+    category: "party",
+    tags: ["Bonfire night", "Quick"],
+    title: "Sausage & Fried Onion Baps",
+    blurb: "Proper sausages in soft baps with a pile of slow-fried sticky onions. Easy to eat stood round a fire.",
+    serves: 8, unit: "baps",
+    chips: [["Makes 8"], ["30 min"], ["Hand-held"]],
+    ingredients: [
+      [8, "", "good pork sausages"],
+      [3, "", "onions, thinly sliced"],
+      [1, "tbsp", "oil"],
+      [15, "g", "butter"],
+      [1, "tsp", "brown sugar"],
+      [8, "", "soft white baps"],
+      [1, "", "mustard and ketchup, to serve"]
+    ],
+    steps: [
+      ["Start the onions", "Cook the onions in the oil and butter over a low-medium heat, stirring now and then, until soft and golden. Add the sugar for the last few minutes so they go sticky.", 1500],
+      ["Cook the sausages", "Meanwhile, roast the sausages at 180°C fan (200°C, gas 6), turning once, until browned and cooked through. Or cook them over the fire.", 1500],
+      ["Build", "Split the baps, add a sausage and a heap of onions, and finish with mustard or ketchup."]
+    ]
+  },
+  {
+    id: "honey-chilli-pigs-in-blankets",
+    category: "sides",
+    tags: ["Christmas", "Spicy"],
+    title: "Honey & Chilli Pigs in Blankets",
+    blurb: "Chipolatas wrapped in streaky bacon and glazed with honey and a spoon of scorpion chilli chutney for a sticky, sweet-hot finish.",
+    serves: 12, unit: "pigs in blankets",
+    chips: [["Makes 12"], ["35 min"], ["Sweet and hot", "hot"]],
+    ingredients: [
+      [12, "", "chipolata sausages"],
+      [12, "", "rashers streaky bacon"],
+      [2, "tbsp", "honey"],
+      [1, "tbsp", "Trinidad Scorpion Chilli Chutney"]
+    ],
+    steps: [
+      ["Wrap", "Heat the oven to 180°C fan (200°C, gas 6). Stretch each rasher with the back of a knife, then wrap one round each chipolata and lay them seam-side down in a roasting tin.", 0],
+      ["Roast", "Roast until the bacon is starting to crisp.", 900],
+      ["Glaze", "Warm the honey and chutney together, brush over the pigs in blankets, and roast until sticky and dark at the edges.", 600]
+    ],
+    note: ["Heat level", "The scorpion chutney is fierce. Start with a teaspoon if people at the table don't like heat."]
+  },
+  {
+    id: "sprouts-with-chorizo",
+    category: "sides",
+    tags: ["Christmas", "Quick"],
+    title: "Brussels Sprouts with Chorizo",
+    blurb: "Sprouts charred in smoky chorizo oil with garlic, butter and a squeeze of lemon. Good for converting sprout haters.",
+    serves: 6, unit: "people",
+    chips: [["Serves 6"], ["20 min"], ["Chorizo oil does the work", "hot"]],
+    ingredients: [
+      [500, "g", "Brussels sprouts, trimmed and halved"],
+      [100, "g", "chorizo, diced"],
+      [15, "g", "butter"],
+      [1, "", "garlic clove, crushed"],
+      [0.5, "", "lemon, juiced"]
+    ],
+    steps: [
+      ["Blanch", "Boil the sprouts in salted water for 3 minutes, then drain well and let them steam dry.", 180],
+      ["Fry the chorizo", "Fry the chorizo in a dry frying pan until crisp and it has released its oil.", 300],
+      ["Char the sprouts", "Add the sprouts cut-side down and leave them alone until they're deeply browned, then toss.", 360],
+      ["Finish", "Add the butter and garlic for the last minute, then squeeze over the lemon and season."]
+    ],
+    note: ["Make ahead", "Blanch the sprouts the day before and keep them in the fridge, so on the day it's a 10-minute job."]
+  },
+  {
+    id: "chutney-glazed-ham",
+    category: "roasts",
+    tags: ["Christmas", "Make-ahead"],
+    title: "Chutney-Glazed Ham",
+    blurb: "A gammon joint simmered until tender, then roasted with a sticky honey, mustard and chilli chutney glaze.",
+    serves: 10, unit: "people",
+    chips: [["Serves 10"], ["About 2 hrs"], ["Great cold on Boxing Day", "hot"]],
+    ingredients: [
+      [2, "kg", "unsmoked gammon joint"],
+      [1, "", "onion, halved"],
+      [2, "", "bay leaves"],
+      [1, "tbsp", "black peppercorns"],
+      [20, "", "whole cloves"],
+      [3, "tbsp", "honey"],
+      [2, "tbsp", "Trinidad Scorpion Chilli Chutney (or any chutney)"],
+      [1, "tbsp", "wholegrain mustard"]
+    ],
+    steps: [
+      ["Simmer", "Put the gammon in a big pan with the onion, bay and peppercorns, cover with cold water and bring to the boil. Skim, then simmer gently with the lid on. Allow about 20 minutes per 450g.", 5400],
+      ["Heat the oven", "Heat the oven to 180°C fan (200°C, gas 6). Lift out the gammon and let it cool for 10 minutes.", 600],
+      ["Score and stud", "Cut away the skin, leaving a layer of fat. Score the fat into diamonds and push a clove into the centre of each.", 0],
+      ["Glaze and roast", "Mix the honey, chutney and mustard, spread over the fat, and roast in a foil-lined tin until sticky and caramelised, basting once.", 1500],
+      ["Rest", "Rest for 15 minutes before carving, or cool completely to serve cold.", 900]
+    ],
+    note: ["Salty gammon", "Check the packet: some joints need soaking in cold water overnight first. Weigh yours to work out the simmering time."]
+  },
+  {
+    id: "port-mince-pies",
+    category: "baking",
+    tags: ["Christmas", "Make-ahead"],
+    title: "Mince Pies with Port",
+    blurb: "Quick mince pies with shop-bought pastry and mincemeat lifted with a splash of tawny port.",
+    serves: 18, unit: "pies",
+    chips: [["Makes 18"], ["45 min"], ["Freeze well"]],
+    ingredients: [
+      [410, "g", "jar mincemeat"],
+      [2, "tbsp", "tawny port"],
+      [500, "g", "shortcrust pastry"],
+      [1, "", "egg, beaten"],
+      [1, "tbsp", "icing sugar, to dust"]
+    ],
+    steps: [
+      ["Spike the mincemeat", "Stir the port into the mincemeat. If you have time, leave it for an hour or overnight.", 0],
+      ["Line the tins", "Heat the oven to 180°C fan (200°C, gas 6). Roll the pastry to about 3mm and cut 18 rounds of 7.5cm to line a bun tin (two batches if needed).", 0],
+      ["Fill and top", "Add a heaped teaspoon of mincemeat to each, then top with smaller rounds or stars cut from the trimmings. Brush with beaten egg.", 0],
+      ["Bake", "Bake until golden.", 1140],
+      ["Cool and dust", "Leave in the tin for 5 minutes, lift out onto a rack, and dust with icing sugar.", 300]
+    ],
+    note: ["Freezing", "Freeze them baked or unbaked. Bake from frozen for a few extra minutes, or warm baked ones through at 160°C fan."]
+  },
+  {
+    id: "overnight-cinnamon-buns",
+    category: "baking",
+    tags: ["Christmas", "Make-ahead", "Vegetarian"],
+    title: "Overnight Cinnamon Buns",
+    blurb: "Soft, buttery cinnamon swirls shaped on Christmas Eve, left to rise in the fridge, and baked fresh in the morning.",
+    serves: 12, unit: "buns",
+    chips: [["Makes 12"], ["Fridge overnight", "hot"], ["Christmas morning"]],
+    ingredients: [
+      [500, "g", "strong white bread flour"],
+      [7, "g", "fast-action yeast"],
+      [50, "g", "caster sugar"],
+      [1, "tsp", "salt"],
+      [250, "ml", "whole milk, lukewarm"],
+      [60, "g", "butter, melted"],
+      [1, "", "egg"],
+      [100, "g", "soft butter, for the filling"],
+      [100, "g", "light brown soft sugar"],
+      [1, "tbsp", "ground cinnamon"],
+      [100, "g", "icing sugar"],
+      [2, "tbsp", "milk, for the icing"]
+    ],
+    steps: [
+      ["Make the dough", "Mix the flour, yeast, caster sugar and salt. Add the warm milk, melted butter and egg and bring together, then knead until smooth and stretchy.", 600],
+      ["First rise", "Cover and leave somewhere warm until doubled in size.", 3600],
+      ["Shape", "Roll out to about 40 × 30cm. Spread with the soft butter, sprinkle over the brown sugar and cinnamon, then roll up tightly from a long edge. Cut into 12 and sit them in a lined 23 × 33cm tin."],
+      ["Fridge overnight", "Cover and refrigerate for 8 to 16 hours."],
+      ["Morning rise", "Take them out of the fridge and leave somewhere warm until puffy. Heat the oven to 180°C fan (200°C, gas 6).", 2700],
+      ["Bake", "Bake until golden.", 1380],
+      ["Ice", "Mix the icing sugar with the milk and drizzle over the warm buns."]
+    ]
+  },
+  {
+    id: "boxing-day-fried-rice",
+    category: "asian",
+    tags: ["Christmas", "Quick", "Weeknight"],
+    title: "Boxing Day Fried Rice",
+    blurb: "The char siu fried rice method with leftover turkey or ham in a sticky, smoky sauce. No overnight marinating needed.",
+    serves: 2, unit: "people",
+    chips: [["Serves 2"], ["25 min with cooked rice"], ["Uses leftovers", "hot"]],
+    ingredients: [
+      [250, "g", "leftover turkey or ham, diced"],
+      [2, "tbsp", "ketchup"],
+      [2, "tbsp", "honey"],
+      [1, "tbsp", "hoisin sauce"],
+      [0.5, "tsp", "Chinese five spice"],
+      [0.25, "tsp", "liquid smoke"],
+      [3, "cup", "long-grain rice (1 cup per person, plus 1 for the pot)", "plus1"],
+      [4, "", "spring onions"],
+      [1, "tbsp", "oil"]
+    ],
+    steps: [
+      ["Cook and chill the rice", "Boil the rice in salted water, drain, rinse under cold water and chill. Or use leftover cooked rice.", 600],
+      ["Mix the sauce", "Stir together the ketchup, honey, hoisin, five spice and liquid smoke. Slice the spring onions, keeping the whites and greens separate.", 0],
+      ["Crisp the meat", "Fry the turkey or ham in the oil until the edges crisp. Add the sauce and bubble until sticky. Lift the meat out and keep the sauce in the pan.", 300],
+      ["Onions and rice", "Fry the spring onion whites in the sauce until caramelised, then add the rice and toss until hot and coated.", 360],
+      ["Finish", "Return the meat, add the spring onion greens and mix through."]
+    ],
+    note: ["Same method", "This is the Char Siu Pork Fried Rice with the cooked leftovers swapped in, so the meat only needs crisping, not cooking."]
+  },
+  {
+    id: "mulled-wine",
+    category: "drinks",
+    tags: ["Christmas", "Quick"],
+    title: "Mulled Wine",
+    blurb: "Red wine warmed slowly with orange, cinnamon, cloves and star anise, with a splash of brandy or port at the end.",
+    serves: 6, unit: "glasses",
+    chips: [["Serves 6"], ["20 min"], ["Never let it boil", "hot"]],
+    ingredients: [
+      [750, "ml", "bottle fruity red wine"],
+      [1, "", "orange, sliced"],
+      [1, "", "cinnamon stick"],
+      [4, "", "cloves"],
+      [2, "", "star anise"],
+      [75, "g", "light brown soft sugar (to taste)"],
+      [50, "ml", "brandy or port (optional)"]
+    ],
+    steps: [
+      ["Warm", "Put everything except the brandy in a pan and warm gently, stirring until the sugar dissolves.", 0],
+      ["Infuse", "Keep it just steaming on the lowest heat to let the spices infuse. Don't let it boil: that burns off the alcohol and makes it bitter.", 900],
+      ["Finish", "Taste for sweetness, stir in the brandy or port, and ladle into heatproof glasses."]
+    ],
+    note: ["Spiced cider", "Swap the wine for 1 litre of cloudy cider, use less sugar, and add a slice of fresh ginger."]
+  },
+  {
     id: "scorpion-chilli-chutney",
     tags: ["Spicy", "Make-ahead", "Vegetarian"],
     category: "sides",
@@ -755,6 +1063,7 @@ function fmtQty(amount, unit) {
     return (amount < 50 ? Math.round(amount) : Math.round(amount / 5) * 5) + " " + unit;
   }
   if (!unit) return fmtNum(Math.max(1, Math.round(amount * 2) / 2));
+  if (unit === "kg") return (Math.round(amount * 10) / 10) + " kg";
   if (unit === "cup") return fmtNum(amount) + (amount > 1.1 ? " cups" : " cup");
   return fmtNum(amount) + " " + unit;
 }
@@ -823,18 +1132,29 @@ function renderSeason() {
   const now = new Date();
   const m = now.getMonth(), d = now.getDate();
   const el = document.getElementById("season");
-  // Show from 1 November to 31 December
+  const bonfire = (m === 9 && d >= 15) || (m === 10 && d <= 5);
+  if (bonfire) {
+    const bl = RECIPES.filter(r => (r.tags || []).includes("Bonfire night"));
+    const left = Math.ceil((new Date(now.getFullYear(), 10, 5) - new Date(now.getFullYear(), m, d)) / 86400000);
+    el.innerHTML = bl.length ? seasonStrip("Bonfire <em>night</em>", left > 0 ? `${left} day${left === 1 ? "" : "s"} to go` : "Remember, remember", "Bonfire night", bl) : "";
+    return;
+  }
+  // Christmas from 6 November to 31 December
   if (m < 10) { el.innerHTML = ""; return; }
   const list = RECIPES.filter(r => (r.tags || []).includes("Christmas"));
   if (!list.length) { el.innerHTML = ""; return; }
   const xmas = new Date(now.getFullYear(), 11, 25);
   const days = Math.ceil((xmas - new Date(now.getFullYear(), m, d)) / 86400000);
   const when = days > 1 ? `${days} days to go` : days === 1 ? "It's Christmas Eve" : days === 0 ? "Merry Christmas" : "Leftover season";
-  el.innerHTML = `
+  el.innerHTML = seasonStrip("Christmas <em>is coming</em>", when, "Christmas", list);
+}
+
+function seasonStrip(heading, when, tag, list) {
+  return `
     <section class="season">
       <div class="season-head">
-        <h2>Christmas <em>is coming</em></h2>
-        <span class="countdown">${when} · <a href="#${tagSlug("Christmas")}">See all ${list.length}</a></span>
+        <h2>${heading}</h2>
+        <span class="countdown">${when} · <a href="#${tagSlug(tag)}">See all ${list.length}</a></span>
       </div>
       <div class="strip">
         ${list.map(r => `<a class="mini" href="#${r.id}">
