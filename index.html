@@ -134,6 +134,69 @@ a { color: var(--cobalt); }
 .mini span { display: block; padding: 10px 12px 12px; font-size: 14px; font-weight: 500; line-height: 1.35; }
 .countdown { font-size: 14px; color: var(--muted); }
 
+.top-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.lists-link { font-weight: 600; }
+.muted { color: var(--muted); }
+.small-print { font-size: 13px; color: var(--muted); margin-top: 18px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.new-list h2, .shop h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0 0 12px; }
+.form-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.form-row label { display: grid; gap: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
+.form-row input, .date-input, .add-row select, .atl-panel select, .atl-panel input {
+  font: 400 15px var(--font-body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px;
+}
+.form-row input[type=text] { min-width: 220px; }
+.form-row input[type=number] { width: 80px; }
+.list-card .collage { display: flex; }
+.list-card .collage img { flex: 1; min-width: 0; height: 100%; object-fit: cover; }
+.list-card .collage .placeholder { width: 100%; height: 100%; }
+.list-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; padding: 14px 18px; }
+.list-controls .servings { margin: 0; }
+.btn.danger { border-color: #b3261e; color: #b3261e; }
+.list-grid { display: grid; grid-template-columns: 1fr minmax(260px, 360px); gap: 26px; align-items: start; }
+@media (max-width: 800px) { .list-grid { grid-template-columns: 1fr; } }
+.list-h { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0 0 12px; }
+.list-h + * { margin-bottom: 8px; }
+.entries { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+.entry {
+  display: grid; grid-template-columns: 48px 1fr auto auto auto; gap: 12px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px;
+}
+.entry img, .entry .dot { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; display: block; }
+.entry-main { display: grid; min-width: 0; }
+.entry-main a { font-weight: 600; text-decoration: none; color: var(--ink); }
+.entry-main a:hover { color: var(--cobalt); }
+.entry-main .muted { font-size: 13px; }
+.entry .unit { font-size: 13px; }
+.entry .stepper { justify-self: start; }
+.stepper.small button { width: 30px; height: 30px; font-size: 16px; }
+.stepper.small input { width: 42px; height: 30px; font-size: 14px; }
+.remove { border: 0; background: transparent; color: var(--muted); font-size: 16px; cursor: pointer; padding: 6px; border-radius: 8px; }
+.remove:hover { color: #b3261e; background: var(--cobalt-soft); }
+@media (max-width: 520px) {
+  .entry { grid-template-columns: 40px 1fr auto; }
+  .entry img, .entry .dot { width: 40px; height: 40px; }
+  .entry .stepper { grid-column: 2; }
+  .entry .unit { grid-column: 3; grid-row: 2; }
+  .entry .remove { grid-column: 3; grid-row: 1; }
+}
+.add-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+.add-row select { flex: 1; min-width: 200px; }
+.plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.plan > div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.plan h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--custard); }
+.plan ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.plan a { text-decoration: none; font-weight: 500; }
+.shop-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+.shop-head h2 { margin: 0; }
+.shop .ingredients small { font-size: 12px; }
+.shop-text { width: 100%; min-height: 160px; margin-top: 10px; font: 13px/1.5 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.copy-msg { font-size: 13px; margin: 8px 0 0; }
+.add-to-list { margin-top: 10px; display: grid; gap: 10px; justify-items: start; }
+.atl-panel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.atl-panel[hidden] { display: none; }
+.atl-panel label { font-size: 13px; font-weight: 500; color: var(--muted); }
 .section-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; }
 
 .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
@@ -279,7 +342,10 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 <div class="wrap">
   <div class="topbar">
     <a class="brand" href="#home">The <em>Recipe Book</em></a>
-    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+    <div class="top-right">
+      <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+      <a class="tag lists-link" href="#lists">Event lists</a>
+    </div>
   </div>
 
   <section class="view" id="view-home">
@@ -1538,6 +1604,7 @@ function renderRecipe(r) {
       <p>${esc(r.blurb)}</p>
       <div class="meta">${r.chips.map(c => `<span class="chip ${c[1] || ""}">${esc(c[0])}</span>`).join("")}</div>
       ${(r.tags || []).length ? `<div class="tags">${r.tags.map(t => `<a class="tag" href="#${tagSlug(t)}">${esc(t)}</a>`).join("")}</div>` : ""}
+      ${addToListPanel(r)}
       ${r.source ? `<p class="source">Adapted from ${r.source[1] ? `<a href="${r.source[1]}" target="_blank" rel="noopener">${esc(r.source[0])}</a>` : esc(r.source[0])}</p>` : ""}
     </div>
     <div class="grid">
@@ -1599,6 +1666,7 @@ function renderRecipe(r) {
       refresh();
     }));
   view.querySelectorAll(".timer").forEach(setupTimer);
+  wireAddToList(r);
   refresh();
 }
 
@@ -1627,6 +1695,307 @@ function setupTimer(btn) {
   });
 }
 
+/* ---------- Event lists ---------- */
+const MENUS = [
+  { id: "menu-christmas-day", name: "Christmas Day", guests: 6,
+    blurb: "Roast with all the trimmings, a nata tart for pudding and mulled wine.",
+    items: ["roast-joint-garlic-jus", "honey-carrots-parsnips", "sprouts-with-chorizo", "honey-chilli-pigs-in-blankets", "apple-nata-tart", "mulled-wine"] },
+  { id: "menu-boxing-day", name: "Boxing Day", guests: 4,
+    blurb: "Cold ham and leftovers, fried rice, mince pies and a hot toddy.",
+    items: ["chutney-glazed-ham", "boxing-day-fried-rice", "scorpion-chilli-chutney", "port-mince-pies", "hot-toddy"] },
+  { id: "menu-bonfire-night", name: "Bonfire Night", guests: 8,
+    blurb: "Fire-pit potatoes, sausage baps, parkin, toffee and hot chocolate.",
+    items: ["ember-jacket-potatoes", "sausage-onion-baps", "parkin", "bonfire-toffee", "toffee-apples", "cinder-toffee", "pan-hot-chocolate"] },
+  { id: "menu-cocktail-night", name: "Cocktail Night", guests: 6,
+    blurb: "A round of drinks with sticky snacks to soak them up.",
+    items: ["old-fashioned", "paloma", "spicy-margarita", "honey-chilli-pigs-in-blankets", "cinder-toffee"] }
+];
+
+const LIST_KEY = "recipe-book-lists";
+let memLists = [];
+function loadLists() {
+  try { const v = JSON.parse(localStorage.getItem(LIST_KEY)); if (Array.isArray(v)) { memLists = v; return v; } } catch (e) {}
+  return memLists;
+}
+function saveLists(lists) {
+  memLists = lists;
+  try { localStorage.setItem(LIST_KEY, JSON.stringify(lists)); } catch (e) {}
+}
+function newListId() { return "list-" + Math.random().toString(36).slice(2, 8); }
+const recipeById = id => RECIPES.find(r => r.id === id);
+
+// How much of a recipe an entry makes: manual qty, else guests for people-based recipes, else the base batch.
+function entryQty(entry, guests) {
+  const r = recipeById(entry.r);
+  if (!r) return 0;
+  if (entry.qty) return entry.qty;
+  return r.unit === "people" ? guests : (/glass|mug/.test(r.unit) ? guests : r.serves);
+}
+function ingredientAmount(r, ing, q) {
+  return ing[3] === "plus1" ? q + 1 : ing[0] * q / r.serves;
+}
+
+function shoppingList(list) {
+  const map = new Map();
+  list.items.forEach(e => {
+    const r = recipeById(e.r); if (!r) return;
+    const q = entryQty(e, list.guests);
+    r.ingredients.forEach(ing => {
+      const key = ing[2].toLowerCase() + "|" + ing[1];
+      const cur = map.get(key) || { name: ing[2], unit: ing[1], amount: 0, from: [] };
+      cur.amount += ingredientAmount(r, ing, q);
+      if (!cur.from.includes(r.title)) cur.from.push(r.title);
+      map.set(key, cur);
+    });
+  });
+  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function listCard(l, href) {
+  const photos = l.items.map(recipeById).filter(r => r && r.photo).slice(0, 3);
+  return `<a class="card list-card" href="#${href}">
+    <div class="photo collage">${photos.length
+      ? photos.map(r => `<img src="${r.photo}" alt="" loading="lazy">`).join("")
+      : `<div class="placeholder" style="${swatch("#1f4fa8")};background-size:32px 32px"></div>`}</div>
+    <h3>${esc(l.name)}</h3>
+    <p>${l.blurb ? esc(l.blurb) + " " : ""}${l.items.length} recipe${l.items.length === 1 ? "" : "s"} · ${l.guests} guests${l.date ? " · " + esc(fmtDate(l.date)) : ""}</p>
+  </a>`;
+}
+function fmtDate(d) {
+  try { return new Date(d + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }); } catch (e) { return d; }
+}
+
+function renderLists() {
+  const mine = loadLists();
+  document.getElementById("view-category").innerHTML = `
+    <div class="cat-head">
+      <h1>Event lists</h1>
+      <p>Plan what to make for a party or a big meal. Add recipes, set the number of guests, and get one shopping list and a do-ahead plan.</p>
+    </div>
+    <form class="panel new-list" id="new-list">
+      <h2>Start a new list</h2>
+      <div class="form-row">
+        <label for="nl-name">Event<input id="nl-name" type="text" placeholder="e.g. New Year's Eve" required></label>
+        <label for="nl-date">Date<input id="nl-date" type="date"></label>
+        <label for="nl-guests">Guests<input id="nl-guests" type="number" min="1" max="99" value="6"></label>
+        <button class="btn primary" type="submit">Create list</button>
+      </div>
+    </form>
+    <div class="section-label">Your lists</div>
+    ${mine.length ? `<div class="cards">${mine.map(l => listCard(l, l.id)).join("")}</div>`
+      : `<div class="empty"><strong>No lists yet.</strong>Start one above, or open a ready-made menu below and save it as your own.</div>`}
+    <div class="section-label">Ready-made menus</div>
+    <div class="cards">${MENUS.map(m => listCard(m, m.id)).join("")}</div>
+    <p class="small-print">Your lists are saved in this browser on this device.</p>`;
+  document.getElementById("new-list").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("nl-name").value.trim();
+    if (!name) return;
+    const l = { id: newListId(), name, date: document.getElementById("nl-date").value,
+      guests: Math.max(1, parseInt(document.getElementById("nl-guests").value) || 6), items: [] };
+    saveLists([...loadLists(), l]);
+    location.hash = l.id;
+  });
+}
+
+let menuDraft = null; // ready-made menus are edited in memory until saved
+function renderList(id) {
+  const isMenu = id.startsWith("menu-");
+  let list;
+  if (isMenu) {
+    const m = MENUS.find(x => x.id === id);
+    if (!m) return false;
+    if (!menuDraft || menuDraft.id !== id) menuDraft = { id, name: m.name, date: "", guests: m.guests, items: m.items.map(r => ({ r, qty: null })) };
+    list = menuDraft;
+  } else {
+    list = loadLists().find(l => l.id === id);
+    if (!list) return false;
+  }
+  const commit = () => {
+    if (isMenu) { menuDraft = list; }
+    else saveLists(loadLists().map(l => l.id === list.id ? list : l));
+    renderList(id);
+  };
+  const items = list.items.map(e => ({ e, r: recipeById(e.r) })).filter(x => x.r);
+  const ahead = items.filter(x => (x.r.tags || []).includes("Make-ahead"));
+  const onDay = items.filter(x => !(x.r.tags || []).includes("Make-ahead"));
+  const shop = shoppingList(list);
+  const options = CATEGORIES.map(c => {
+    const rs = RECIPES.filter(r => r.category === c.id && !list.items.some(e => e.r === r.id));
+    return rs.length ? `<optgroup label="${esc(c.name)}">${rs.map(r => `<option value="${r.id}">${esc(r.title)}</option>`).join("")}</optgroup>` : "";
+  }).join("");
+
+  const planRow = x => `<li><a href="#${x.r.id}">${esc(x.r.title)}</a> <span class="muted">· ${fmtNum(entryQty(x.e, list.guests))} ${esc(x.r.unit)}</span></li>`;
+
+  document.getElementById("view-category").innerHTML = `
+    <div class="cat-head">
+      <h1>${esc(list.name)}</h1>
+      <p>${isMenu ? "Ready-made menu. Change anything you like, then save it as your own list." : (list.date ? esc(fmtDate(list.date)) : "No date set")}</p>
+    </div>
+    <div class="list-controls panel">
+      <div class="servings">
+        <label for="lg">Guests</label>
+        <span class="stepper">
+          <button type="button" aria-label="Fewer guests" data-g="-1">−</button>
+          <input id="lg" type="number" min="1" max="99" value="${list.guests}">
+          <button type="button" aria-label="More guests" data-g="1">+</button>
+        </span>
+        ${isMenu ? "" : `<label for="ld" style="margin-left:8px">Date</label><input id="ld" class="date-input" type="date" value="${esc(list.date || "")}">`}
+      </div>
+      <div class="actions">
+        ${isMenu ? `<button type="button" class="btn primary" id="save-menu">Save as my list</button>` : `<button type="button" class="btn ghost danger" id="del-list">Delete list</button>`}
+      </div>
+    </div>
+
+    <div class="list-grid">
+      <section>
+        <h2 class="list-h">Recipes</h2>
+        ${items.length ? `<ul class="entries">${items.map((x, i) => `
+          <li class="entry">
+            ${x.r.photo ? `<img src="${x.r.photo}" alt="">` : `<span class="dot" style="${swatch(catOf(x.r.category).color)};background-size:16px 16px"></span>`}
+            <div class="entry-main">
+              <a href="#${x.r.id}">${esc(x.r.title)}</a>
+              <span class="muted">${esc(catOf(x.r.category).name)}</span>
+            </div>
+            <span class="stepper small">
+              <button type="button" aria-label="Less" data-i="${i}" data-d="-1">−</button>
+              <input type="number" min="1" max="99" value="${fmtNumPlain(entryQty(x.e, list.guests))}" data-i="${i}" aria-label="How much of ${esc(x.r.title)}">
+              <button type="button" aria-label="More" data-i="${i}" data-d="1">+</button>
+            </span>
+            <span class="muted unit">${esc(x.r.unit)}</span>
+            <button type="button" class="remove" data-rm="${i}" aria-label="Remove ${esc(x.r.title)}">✕</button>
+          </li>`).join("")}</ul>` : `<div class="empty"><strong>Nothing on this list yet.</strong>Add recipes below, or use "Add to a list" on any recipe page.</div>`}
+        ${options ? `<div class="add-row">
+          <label for="add-r" class="sr-only">Add a recipe</label>
+          <select id="add-r"><option value="">Add a recipe…</option>${options}</select>
+          <button type="button" class="btn primary" id="add-btn">Add</button>
+        </div>` : ""}
+
+        ${items.length ? `<h2 class="list-h">Plan</h2>
+        <div class="plan">
+          ${ahead.length ? `<div><h3>Do ahead</h3><ul>${ahead.map(planRow).join("")}</ul></div>` : ""}
+          ${onDay.length ? `<div><h3>On the day</h3><ul>${onDay.map(planRow).join("")}</ul></div>` : ""}
+        </div>` : ""}
+      </section>
+
+      <aside class="panel shop">
+        <div class="shop-head">
+          <h2>Shopping list</h2>
+          ${shop.length ? `<button type="button" class="btn ghost" id="copy-shop">Copy</button>` : ""}
+        </div>
+        ${shop.length ? `<ul class="ingredients">${shop.map((s, i) => `
+          <li><label for="sh-${i}">
+            <input type="checkbox" id="sh-${i}">
+            <span class="qty">${fmtQty(s.amount, s.unit)}</span>
+            <span>${esc(s.name)}${s.from.length > 1 ? `<small class="muted"> · ${s.from.length} recipes</small>` : ""}</span>
+          </label></li>`).join("")}</ul>` : `<p class="muted">Add recipes to build the shopping list.</p>`}
+        <textarea id="shop-text" class="sr-only" readonly aria-hidden="true">${esc(list.name + " shopping list\n" + shop.map(s => "- " + fmtQty(s.amount, s.unit) + " " + s.name).join("\n"))}</textarea>
+        <p class="copy-msg muted" id="copy-msg" role="status"></p>
+      </aside>
+    </div>`;
+
+  const view = document.getElementById("view-category");
+  const g = view.querySelector("#lg");
+  const setGuests = v => { list.guests = Math.max(1, Math.min(99, parseInt(v) || 1)); commit(); };
+  g.addEventListener("change", () => setGuests(g.value));
+  view.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => setGuests(list.guests + Number(b.dataset.g))));
+  const d = view.querySelector("#ld");
+  if (d) d.addEventListener("change", () => { list.date = d.value; commit(); });
+
+  view.querySelectorAll(".entry input[data-i]").forEach(inp => inp.addEventListener("change", () => {
+    items[inp.dataset.i].e.qty = Math.max(1, parseFloat(inp.value) || 1); commit();
+  }));
+  view.querySelectorAll(".entry button[data-d]").forEach(b => b.addEventListener("click", () => {
+    const x = items[b.dataset.i];
+    x.e.qty = Math.max(1, entryQty(x.e, list.guests) + Number(b.dataset.d)); commit();
+  }));
+  view.querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => {
+    const rid = items[b.dataset.rm].e.r;
+    list.items = list.items.filter(e => e.r !== rid); commit();
+  }));
+  const addBtn = view.querySelector("#add-btn");
+  if (addBtn) addBtn.addEventListener("click", () => {
+    const v = view.querySelector("#add-r").value;
+    if (!v) return;
+    list.items.push({ r: v, qty: null }); commit();
+  });
+
+  const copy = view.querySelector("#copy-shop");
+  if (copy) copy.addEventListener("click", async () => {
+    const text = view.querySelector("#shop-text").value;
+    const msg = view.querySelector("#copy-msg");
+    try { await navigator.clipboard.writeText(text); msg.textContent = "Copied. Paste it into your notes or a message."; }
+    catch (e) {
+      const ta = view.querySelector("#shop-text");
+      ta.classList.remove("sr-only"); ta.classList.add("shop-text"); ta.removeAttribute("aria-hidden");
+      ta.focus(); ta.select();
+      msg.textContent = "Couldn't copy automatically. The list is selected above, so copy it from there.";
+    }
+  });
+
+  const save = view.querySelector("#save-menu");
+  if (save) save.addEventListener("click", () => {
+    const l = { id: newListId(), name: list.name, date: "", guests: list.guests, items: list.items.map(e => ({ ...e })) };
+    saveLists([...loadLists(), l]);
+    menuDraft = null;
+    location.hash = l.id;
+  });
+  const del = view.querySelector("#del-list");
+  if (del) del.addEventListener("click", () => {
+    if (del.dataset.armed) {
+      saveLists(loadLists().filter(l => l.id !== list.id));
+      location.hash = "lists";
+    } else {
+      del.dataset.armed = "1"; del.textContent = "Tap again to delete";
+      setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = "Delete list"; } }, 4000);
+    }
+  });
+  return true;
+}
+function fmtNumPlain(n) { return Math.round(n * 10) / 10; }
+
+// "Add to a list" panel on recipe pages
+function addToListPanel(r) {
+  const lists = loadLists();
+  return `<div class="add-to-list">
+    <button type="button" class="btn ghost" id="atl-open">Add to a list</button>
+    <div class="atl-panel" id="atl-panel" hidden>
+      <label for="atl-select">List</label>
+      <select id="atl-select">
+        ${lists.map(l => `<option value="${l.id}">${esc(l.name)}${l.items.some(e => e.r === r.id) ? " (already added)" : ""}</option>`).join("")}
+        <option value="__new">New list…</option>
+      </select>
+      <input id="atl-name" type="text" placeholder="New list name" ${lists.length ? "hidden" : ""} aria-label="New list name">
+      <button type="button" class="btn primary" id="atl-add">Add</button>
+      <span class="muted" id="atl-msg" role="status"></span>
+    </div>
+  </div>`;
+}
+function wireAddToList(r) {
+  const open = document.getElementById("atl-open");
+  if (!open) return;
+  const panel = document.getElementById("atl-panel");
+  const sel = document.getElementById("atl-select");
+  const name = document.getElementById("atl-name");
+  if (!loadLists().length) sel.value = "__new";
+  open.addEventListener("click", () => { panel.hidden = !panel.hidden; });
+  sel.addEventListener("change", () => { name.hidden = sel.value !== "__new"; if (!name.hidden) name.focus(); });
+  document.getElementById("atl-add").addEventListener("click", () => {
+    let lists = loadLists(), target;
+    if (sel.value === "__new") {
+      const n = name.value.trim();
+      if (!n) { name.focus(); return; }
+      target = { id: newListId(), name: n, date: "", guests: 6, items: [] };
+      lists = [...lists, target];
+    } else {
+      target = lists.find(l => l.id === sel.value);
+    }
+    if (!target.items.some(e => e.r === r.id)) target.items.push({ r: r.id, qty: null });
+    saveLists(lists.map(l => l.id === target.id ? target : l));
+    document.getElementById("atl-msg").innerHTML = `Added to <a href="#${target.id}">${esc(target.name)}</a>.`;
+  });
+}
+
 /* ---------- Routing ---------- */
 function setCrumbs(parts) {
   document.getElementById("crumbs").innerHTML = parts.map((p, i) =>
@@ -1643,7 +2012,17 @@ function route() {
   const tag = tagFromSlug(id);
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
 
-  if (rec) {
+  if (id === "lists") {
+    renderLists();
+    document.getElementById("view-category").classList.add("active");
+    setCrumbs([{ label: "Home", href: "#home" }, { label: "Event lists" }]);
+    document.title = "Event lists · Recipe Book";
+  } else if ((id.startsWith("list-") || id.startsWith("menu-")) && renderList(id)) {
+    document.getElementById("view-category").classList.add("active");
+    const nm = document.querySelector("#view-category h1").textContent;
+    setCrumbs([{ label: "Home", href: "#home" }, { label: "Event lists", href: "#lists" }, { label: nm }]);
+    document.title = nm + " · Recipe Book";
+  } else if (rec) {
     const c = catOf(rec.category);
     renderRecipe(rec);
     document.getElementById("view-recipe").classList.add("active");

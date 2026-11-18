@@ -35,3 +35,9 @@ Recipes live in the `RECIPES` array near the bottom of `index.html`. Each one lo
 ```
 
 To add a tag, add it to the `TAGS` list (it shows on the home page once a recipe uses it). To add a category, add an entry to `CATEGORIES` with an `id`, `name`, `blurb` and tile `color`.
+
+## Event lists
+
+`#lists` shows your event lists and the ready-made menus. A list holds recipes and a guest count. It builds a combined shopping list (with a Copy button) and splits the recipes into "Do ahead" (anything tagged Make-ahead) and "On the day". Recipes measured in people, glasses or mugs scale to the guest count, and anything else starts at one batch. Each amount can be changed by hand.
+
+Your own lists are saved in the browser (localStorage), so they stay on the device you made them on. Ready-made menus live in the `MENUS` array in `index.html`: add one with an `id` starting `menu-`, a `name`, `guests`, `blurb` and a list of recipe ids.
